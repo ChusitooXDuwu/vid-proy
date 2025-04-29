@@ -1,0 +1,81 @@
+{
+    "font": "assets/fnt/PressStart2P.ttf",
+
+    "play_prompt": {
+        "text": "PLAY",
+        "center": true,
+        "size": 8,
+        "color": { "r": 0, "g": 170, "b": 255 },
+        "pos": { "x": 112, "y": 70 }
+    },
+
+    "title": {
+        "text": "TIME PILOT",
+        "center": true,
+        "size": 10,
+        "color": { "r": 255, "g": 255, "b": 0 },
+        "pos": { "x": 112, "y": 90 }
+    },
+
+    "insert_coin": {
+        "text": "PLEASE DEPOSIT COIN",
+        "size": 8,
+        "center": true,
+        "color": { "r": 0, "g": 170, "b": 255 },
+        "pos": { "x": 112, "y": 110 }
+    },
+
+    "try_game": {
+        "text": "AND TRY THIS GAME",
+        "size": 8,
+        "center": true,
+        "color": { "r": 255, "g": 0, "b": 0 },
+        "pos": { "x": 112, "y": 125 }
+    },
+
+    "credit": {
+        "text": "CREDIT",
+        "size": 8,
+        "color": { "r": 0, "g": 170, "b": 255 },
+        "pos": { "x": 140, "y": 248 }
+    },
+
+    "00": {
+        "text": "00",
+        "size": 8,
+        "color": { "r": 255, "g": 255, "b": 255 },
+        "pos": { "x": 195, "y": 248 }
+    },
+
+    "copyright": {
+        "text": "© KONAMI 1982",
+        "center": true,
+        "size": 7,
+        "color": { "r": 255, "g": 255, "b": 255 },
+        "pos": { "x": 112, "y": 226 }
+    },
+
+    "highscore": {
+        "text": "HI-SCORE",
+        "size": 8,
+        "center": true,
+        "color": { "r": 255, "g": 0, "b": 0 },
+        "pos": { "x": 112, "y": 5 }
+    },
+
+    "1-UP": {
+        "text": "1-UP",
+        "size": 8,
+        "center": true,
+        "color": { "r": 255, "g": 0, "b": 0 },
+        "pos": { "x": 20, "y": 5 }
+    },
+
+    "2-UP": {
+        "text": "2-UP",
+        "size": 8,
+        "center": true,
+        "color": { "r": 255, "g": 0, "b": 0 },
+        "pos": { "x": 200, "y": 5 }
+    }
+}

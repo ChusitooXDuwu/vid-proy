@@ -1,6 +1,43 @@
+import pygame
+import esper
+import json
+
+from src.create.prefab_creator import create_text_interface
+from src.ecs.components.c_input_command import CInputCommand
+from src.ecs.systems.s_input_player import system_input_player
+from src.ecs.systems.s_rendering import system_rendering
+
+
 class GameEngine:
     def __init__(self) -> None:
+        # Load configuration from JSON file
+        self._load_json()
+        
+        # Initialize Pygame
+        pygame.init()
+        pygame.display.set_caption(self.window_cfg["title"])
+        self.screen = pygame.display.set_mode((self.window_cfg["size"]["w"], self.window_cfg["size"]["h"]), 
+                                              pygame.SCALED)
+        self.bg_color = pygame.Color(self.window_cfg["bg_color"]["r"], 
+                                     self.window_cfg["bg_color"]["g"], 
+                                     self.window_cfg["bg_color"]["b"])
+        
+        # Initialize the clock
+        self.clock = pygame.time.Clock()
+        self.framerate = self.window_cfg["framerate"]
+        self.delta_time = 0
+        
+        self.is_paused = False
         self.is_running = False
+        
+        # Initialize the world
+        self.ecs_world = esper.World()
+
+    def _load_json(self):
+        with open("./assets/cfg/window.json", encoding="utf-8") as window_file:
+            self.window_cfg = json.load(window_file)
+        with open("./assets/cfg/interface.json", encoding="utf-8") as interface_file:
+            self.interface_cfg = json.load(interface_file)
 
     def run(self) -> None:
         self._create()
@@ -13,19 +50,40 @@ class GameEngine:
         self._clean()
 
     def _create(self):
-        pass
+        create_text_interface(self.ecs_world, self.interface_cfg, "play_prompt")
+        create_text_interface(self.ecs_world, self.interface_cfg, "title")
+        create_text_interface(self.ecs_world, self.interface_cfg, "insert_coin")
+        create_text_interface(self.ecs_world, self.interface_cfg, "try_game")
+        create_text_interface(self.ecs_world, self.interface_cfg, "highscore")
+        create_text_interface(self.ecs_world, self.interface_cfg, "copyright")
+        create_text_interface(self.ecs_world, self.interface_cfg, "1-UP")
+        create_text_interface(self.ecs_world, self.interface_cfg, "2-UP")
+        create_text_interface(self.ecs_world, self.interface_cfg, "credit")
+        create_text_interface(self.ecs_world, self.interface_cfg, "00")
 
+        
     def _calculate_time(self):
-        pass
+        self.clock.tick(self.framerate)
+        self.delta_time = self.clock.get_time() / 1000.0
 
     def _process_events(self):
-        pass
+        for events in pygame.event.get():
+            system_input_player(self.ecs_world, events, self._do_action)
+            if events.type == pygame.QUIT:
+                self.is_running = False
 
     def _update(self):
         pass
 
     def _draw(self):
-        pass
+        self.screen.fill(self.bg_color)
+        system_rendering(self.ecs_world, self.screen)
+        pygame.display.flip()
 
     def _clean(self):
+        self.ecs_world.clear_database()
+        pygame.quit()
+    
+    def _do_action(self, c_input:CInputCommand):
         pass
+        
