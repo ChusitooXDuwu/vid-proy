@@ -50,10 +50,7 @@ class GameEngine:
             self._draw()
         self._clean()
 
-    
-        
 
-    
     def _create_multiple(self, interface_cfg:dict, type:str):
         entity_list = []
         for name in interface_cfg[type]:
@@ -73,8 +70,9 @@ class GameEngine:
         
         # Create screen 1
         self.screen_entities = self._create_multiple(self.interface_cfg, "screen_1")
-        # Create screen 2
-        # self.screen2_entities = self._create_multiple(self.interface_cfg, "screen_2")
+    
+    
+    
     
     def _calculate_time(self):
         self.clock.tick(self.framerate)
@@ -101,8 +99,6 @@ class GameEngine:
     def _do_action(self, c_input:CInputCommand):
         if c_input.name == "NEXT_SCREEN":
             if c_input.phase == CommandPhase.START:
-                print("NEXT_SCREEN")
-                
                 if self.mode == "screen_1":
                     self.mode = "screen_2"
                     for entity in self.screen_entities:

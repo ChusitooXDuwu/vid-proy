@@ -22,7 +22,7 @@ def create_sprite(ecs_world: esper.World, pos: pygame.Vector2, vel: pygame.Vecto
     if center:
         sprite_rect = surface.get_rect()
         pos = pygame.Vector2(pos.x - sprite_rect.width / 2, pos.y - sprite_rect.height / 2)
-        print(f"pos: {pos}")
+    
     sprite_entity = ecs_world.create_entity()
     ecs_world.add_component(sprite_entity, 
                             CTransform(pos))
