@@ -32,25 +32,25 @@ def create_sprite(ecs_world: esper.World, pos: pygame.Vector2, vel: pygame.Vecto
                             CSurface.from_surface(surface))
     return sprite_entity
 
-def create_text_interface(world:esper.World, interface_info:dict):
-    font = ServiceLocator.texts_service.get(interface_info["font"], 
-                                            interface_info["size"])
+def create_text_interface(world:esper.World, interface_info:dict, type:str) -> int:
+    font = ServiceLocator.fonts_service.get(interface_info["font"], 
+                                            interface_info[type]["size"])
     
-    color = pygame.Color(interface_info["color"]["r"],
-                         interface_info["color"]["g"],
-                         interface_info["color"]["b"])
+    color = pygame.Color(interface_info[type]["color"]["r"],
+                         interface_info[type]["color"]["g"],
+                         interface_info[type]["color"]["b"])
     
-    pos = pygame.Vector2(interface_info["pos"]["x"], interface_info["pos"]["y"])
+    pos = pygame.Vector2(interface_info[type]["pos"]["x"], interface_info[type]["pos"]["y"])
     
-    center = interface_info.get("center", False)
+    center = interface_info[type].get("center", False)
     
-    return create_text(world, interface_info["text"], font, color, pos, center)
+    return create_text(world, interface_info[type]["text"], font, color, pos, center)
 
-def create_logo(world:esper.World, logo_info:dict) -> int:
-    surface = ServiceLocator.images_service.get(logo_info["image"])
-    pos = pygame.Vector2(logo_info["pos"]["x"], logo_info["pos"]["y"])
+def create_image(world:esper.World, interface_info:dict, type:str) -> int:
+    surface = ServiceLocator.images_service.get(interface_info[type]["image"])
+    pos = pygame.Vector2(interface_info[type]["pos"]["x"], interface_info[type]["pos"]["y"])
     vel = pygame.Vector2(0,0)
-    center = logo_info.get("center", False)
+    center = interface_info[type].get("center", False)
     return create_sprite(world, pos, vel, surface, center)
 
 
