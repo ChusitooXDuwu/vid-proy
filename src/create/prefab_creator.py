@@ -1,7 +1,9 @@
 import pygame
 import esper
+import math
 
 from src.ecs.components.c_animation import CAnimation
+from src.ecs.components.c_rotation import CRotation
 from src.ecs.components.c_speed import CSpeed
 from src.ecs.components.c_surface import CSurface
 from src.ecs.components.c_transform import CTransform
@@ -85,7 +87,9 @@ def create_image(world: esper.World, interface_info: dict, image_type: str) -> i
     return create_sprite(world, pos, vel, surface, center)
 
 
-def create_ship(world: esper.World, player_cfg: dict, level_info: dict) -> int:
+def create_ship(
+    world: esper.World, player_cfg: dict, level_info: dict, player_rotations: int
+) -> int:
     player_sprite = ServiceLocator.images_service.get(player_cfg["image"])
     width, height = player_sprite.get_size()
     # Need adjustment for the number of frames
@@ -101,8 +105,19 @@ def create_ship(world: esper.World, player_cfg: dict, level_info: dict) -> int:
         vel,
         player_sprite,
     )
+    directions = [
+        pygame.Vector2(
+            math.cos(2 * math.pi * i / player_rotations),
+            math.sin(2 * math.pi * i / player_rotations),
+        )
+        for i in range(player_rotations)
+    ]
     world.add_component(player_entity, CTagPlayer())
     world.add_component(player_entity, CAnimation(player_cfg["animations"]))
+    world.add_component(
+        player_entity,
+        CRotation(directions, level_info["rotation_delay"]),
+    )
     # world.add_component(player_entity, CPlayerState()) TODO: Implement player state
     return player_entity
 
@@ -120,6 +135,7 @@ def create_clouds(
     cloud_info: dict,
 ) -> int:
     cloud_sprite = ServiceLocator.images_service.get(cloud_info["image"])
+
     for cloud_pos in cloud_info["clouds"]:
         vel = pygame.Vector2(cloud_info["speed"], cloud_info["speed"])
         pos = pygame.Vector2(

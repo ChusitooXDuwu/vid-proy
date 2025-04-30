@@ -19,7 +19,7 @@ class GameEngine:
         pygame.init()
         pygame.display.set_caption(self.window_cfg["title"])
         self.screen = pygame.display.set_mode(
-            (self.window_cfg["size"]["w"], self.window_cfg["size"]["h"]), pygame.SCALED
+            (self.window_cfg["size"]["w"], self.window_cfg["size"]["h"]), 0
         )
         self._bg_color = pygame.Color(
             self.window_cfg["bg_color"]["r"],
