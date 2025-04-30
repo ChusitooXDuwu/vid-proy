@@ -34,8 +34,8 @@ class ScoreTableScene(Scene):
         create_text_interface(self.ecs_world, self.score_table_cfg, "credit")
         create_text_interface(self.ecs_world, self.score_table_cfg, "00")
 
-    def do_update(self, delta_time: float):
-        self.elapsed_time += delta_time
+    def do_update(self, deltatime: float):
+        self.elapsed_time += deltatime
 
         if self.elapsed_time >= self.countdown_time:
-            self.switch_scene("GAME_SCENE")
+            self.switch_scene("LEVEL_01_MENU_SCENE")
