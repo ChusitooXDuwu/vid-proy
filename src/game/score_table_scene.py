@@ -9,7 +9,7 @@ class ScoreTableScene(Scene):
     def __init__(self, engine: "src.engine.game_engine.GameEngine") -> None:
         super().__init__(engine)
 
-        with open("assets/cfg/score_table.json") as paddle_file:
+        with open("assets/cfg/score_table.json", encoding="utf-8") as paddle_file:
             self.score_table_cfg = json.load(paddle_file)
 
         self.countdown_time = 4.0

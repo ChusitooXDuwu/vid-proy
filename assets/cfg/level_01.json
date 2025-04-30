@@ -3,12 +3,13 @@
         "position": {
             "x": 160,
             "y": 95
-        }
+        },
+        "player_rotations": 16
     },
     "clouds": {
         "clouds_front": {
             "image": "assets/img/cloud1.png",
-            "velocity": 100,
+            "speed": 100,
             "clouds": [
                 {
                     "x": 40,
@@ -22,7 +23,7 @@
         },
         "clouds_middle": {
             "image": "assets/img/cloud2.png",
-            "velocity": 30,
+            "speed": 30,
             "clouds": [
                 {
                     "x": 20,
@@ -44,7 +45,7 @@
         },
         "clouds_back": {
             "image": "assets/img/cloud3.png",
-            "velocity": 15,
+            "speed": 15,
             "clouds": [
                 {
                     "x": 80,
@@ -56,5 +57,9 @@
                 }
             ]
         }
+    },
+    "global_speed_direction": {
+        "x": 1,
+        "y": 0
     }
 }

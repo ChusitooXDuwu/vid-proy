@@ -3,9 +3,6 @@ import pygame
 import esper
 
 from src.ecs.components.c_input_command import CInputCommand
-from src.ecs.systems.s_animation import system_animation
-from src.ecs.systems.s_cloud_respawner import system_cloud_respawner
-from src.ecs.systems.s_movement import system_movement
 from src.engine.scenes.scene import Scene
 from src.game.game_scene import GameScene
 from src.game.menu_scene import MenuScene
@@ -46,10 +43,7 @@ class GameEngine:
 
         self._scenes["MENU_SCENE"] = MenuScene(self)
         self._scenes["SCORE_TABLE_SCENE"] = ScoreTableScene(self)
-        self._scenes["GAME_SCENE"] = GameScene(
-            self,
-            self.ecs_world,
-        )
+        self._scenes["GAME_SCENE"] = GameScene(self)
 
         self._current_scene: Scene = None
         self._scene_name_to_switch: str = None
@@ -84,14 +78,6 @@ class GameEngine:
 
     def _update(self):
         self._current_scene.simulate(self._delta_time)
-
-        system_animation(self.ecs_world, self._delta_time)
-        # Movement system
-        system_movement(self.ecs_world, self._delta_time)
-        # Cloud respawner system
-        system_cloud_respawner(self.ecs_world, self.screen)
-
-        self.ecs_world._clear_dead_entities()
 
     def _draw(self):
         self.screen.fill(self._bg_color)

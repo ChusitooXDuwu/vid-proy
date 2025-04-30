@@ -2,7 +2,7 @@ import pygame
 import esper
 
 from src.ecs.components.c_animation import CAnimation
-from src.ecs.components.c_input_command import CInputCommand
+from src.ecs.components.c_speed import CSpeed
 from src.ecs.components.c_surface import CSurface
 from src.ecs.components.c_transform import CTransform
 from src.ecs.components.c_velocity import CVelocity
@@ -50,33 +50,38 @@ def create_sprite(
     return sprite_entity
 
 
-def create_text_interface(world: esper.World, interface_info: dict, type: str) -> int:
+def create_text_interface(
+    world: esper.World, interface_info: dict, interface_type: str
+) -> int:
     font = ServiceLocator.fonts_service.get(
-        interface_info["font"], interface_info[type]["size"]
+        interface_info["font"], interface_info[interface_type]["size"]
     )
 
     color = pygame.Color(
-        interface_info[type]["color"]["r"],
-        interface_info[type]["color"]["g"],
-        interface_info[type]["color"]["b"],
+        interface_info[interface_type]["color"]["r"],
+        interface_info[interface_type]["color"]["g"],
+        interface_info[interface_type]["color"]["b"],
     )
 
     pos = pygame.Vector2(
-        interface_info[type]["pos"]["x"], interface_info[type]["pos"]["y"]
+        interface_info[interface_type]["pos"]["x"],
+        interface_info[interface_type]["pos"]["y"],
     )
 
-    center = interface_info[type].get("center", False)
+    center = interface_info[interface_type].get("center", False)
 
-    return create_text(world, interface_info[type]["text"], font, color, pos, center)
+    return create_text(
+        world, interface_info[interface_type]["text"], font, color, pos, center
+    )
 
 
-def create_image(world: esper.World, interface_info: dict, type: str) -> int:
-    surface = ServiceLocator.images_service.get(interface_info[type]["image"])
+def create_image(world: esper.World, interface_info: dict, image_type: str) -> int:
+    surface = ServiceLocator.images_service.get(interface_info[image_type]["image"])
     pos = pygame.Vector2(
-        interface_info[type]["pos"]["x"], interface_info[type]["pos"]["y"]
+        interface_info[image_type]["pos"]["x"], interface_info[image_type]["pos"]["y"]
     )
     vel = pygame.Vector2(0, 0)
-    center = interface_info[type].get("center", False)
+    center = interface_info[image_type].get("center", False)
     return create_sprite(world, pos, vel, surface, center)
 
 
@@ -98,7 +103,7 @@ def create_ship(world: esper.World, player_cfg: dict, level_info: dict) -> int:
     )
     world.add_component(player_entity, CTagPlayer())
     world.add_component(player_entity, CAnimation(player_cfg["animations"]))
-    # world.add_component(player_entity, CPlayerState())
+    # world.add_component(player_entity, CPlayerState()) TODO: Implement player state
     return player_entity
 
 
@@ -110,27 +115,17 @@ def create_logo(world: esper.World, logo_info: dict) -> int:
     return create_sprite(world, pos, vel, surface, center)
 
 
-def create_input_player(ecs_world: esper.World):
-    input_next = ecs_world.create_entity()
-
-    ecs_world.add_component(input_next, CInputCommand("NEXT_SCREEN", pygame.K_RETURN))
-
-
 def create_clouds(
     ecs_world: esper.World,
     cloud_info: dict,
 ) -> int:
     cloud_sprite = ServiceLocator.images_service.get(cloud_info["image"])
     for cloud_pos in cloud_info["clouds"]:
-        vel = pygame.Vector2(-cloud_info["velocity"], 0)
+        vel = pygame.Vector2(cloud_info["speed"], cloud_info["speed"])
         pos = pygame.Vector2(
             cloud_pos["x"],
             cloud_pos["y"],
         )
-        cloud_entity = create_sprite(
-            ecs_world,
-            pos,
-            vel,
-            cloud_sprite,
-        )
+        cloud_entity = create_sprite(ecs_world, pos, vel, cloud_sprite, vel)
         ecs_world.add_component(cloud_entity, CTagCloud())
+        ecs_world.add_component(cloud_entity, CSpeed(cloud_info["speed"]))
