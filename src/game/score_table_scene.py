@@ -20,6 +20,9 @@ class ScoreTableScene(Scene):
         self.elapsed_time = 0.0
         
     def do_create(self):
+        
+        self.elapsed_time = 0.0
+        
         create_image(self.ecs_world, self.score_table_cfg, 'logo')
         create_text_interface(self.ecs_world, self.score_table_cfg, 'play_prompt')
         create_text_interface(self.ecs_world, self.score_table_cfg, 'copyright')
