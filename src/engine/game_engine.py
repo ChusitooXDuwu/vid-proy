@@ -1,6 +1,6 @@
+import json
 import pygame
 import esper
-import json
 
 from src.create.prefab_creator import (
     create_input_player,
