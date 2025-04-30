@@ -1,13 +1,13 @@
 {
     "title": "Time Pilot - Grupo 2",
     "size": {
-        "w": 224,
-        "h": 256
+        "w": 320,
+        "h": 190
     },
     "bg_color": {
-        "r": 25,
-        "g": 25,
-        "b": 25
+        "r": 0,
+        "g": 0,
+        "b": 0
     },
     "framerate": 60
 }
