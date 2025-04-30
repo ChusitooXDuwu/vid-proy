@@ -1,0 +1,56 @@
+{
+    "player_spawn": {
+        "position": {
+            "x": 160,
+            "y": 95
+        }
+    },
+    "clouds": {
+        "clouds_front": {
+            "image": "assets/img/cloud1.png",
+            "velocity": 100,
+            "clouds": [
+                {
+                    "x": 40,
+                    "y": 40
+                },
+                {
+                    "x": 280,
+                    "y": 150
+                }
+            ]
+        },
+        "clouds_middle": {
+            "image": "assets/img/cloud2.png",
+            "velocity": 30,
+            "clouds": [
+                {
+                    "x": 60,
+                    "y": 120
+                },
+                {
+                    "x": 320,
+                    "y": 80
+                },
+                {
+                    "x": 100,
+                    "y": 200
+                }
+            ]
+        },
+        "clouds_back": {
+            "image": "assets/img/cloud3.png",
+            "velocity": 15,
+            "clouds": [
+                {
+                    "x": 80,
+                    "y": 50
+                },
+                {
+                    "x": 320,
+                    "y": 30
+                }
+            ]
+        }
+    }
+}
