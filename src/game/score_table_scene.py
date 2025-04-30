@@ -40,6 +40,5 @@ class ScoreTableScene(Scene):
         
     def do_action(self, action: CInputCommand):
         if action.name == "START_GAME":
-            #TODO: IMPLEMENT THE GAME
             self.switch_scene("MENU_SCENE") # TODO: Change to the game scene
         
