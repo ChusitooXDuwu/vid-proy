@@ -42,5 +42,5 @@ class ScoreTableScene(Scene):
         self.elapsed_time += deltatime
         
         if self.elapsed_time >= self.countdown_time:
-            self.switch_scene("MENU_SCENE")  # TODO: Change to the game scene
+            self.switch_scene("LEVEL_01_MENU_SCENE")  # TODO: Change to the game scene
 

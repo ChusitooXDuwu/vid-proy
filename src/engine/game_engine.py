@@ -4,6 +4,7 @@ import esper
 
 from src.ecs.components.c_input_command import CInputCommand
 from src.engine.scenes.scene import Scene
+from src.game.level_01_menu import Level01MenuScene
 from src.game.menu_scene import MenuScene
 from src.game.score_table_scene import ScoreTableScene
 
@@ -42,6 +43,8 @@ class GameEngine:
         
         self._scenes["MENU_SCENE"] = MenuScene(self)
         self._scenes["SCORE_TABLE_SCENE"] = ScoreTableScene(self)
+        self._scenes["LEVEL_01_MENU_SCENE"] = Level01MenuScene(self)
+        self._scenes["LEVEL_01_SCENE"] = None 
         
         self._current_scene:Scene = None
         self._scene_name_to_switch:str = None

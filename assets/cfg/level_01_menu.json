@@ -1,0 +1,159 @@
+{
+    "font": "assets/fnt/PressStart2P.ttf",
+    "play_prompt": {
+        "text": "PLAY",
+        "center": true,
+        "size": 8,
+        "color": {
+            "r": 0,
+            "g": 170,
+            "b": 255
+        },
+        "pos": {
+            "x": 160,
+            "y": 50
+        }
+    },
+    "logo": {
+        "image": "assets/img/logo.png",
+        "center": true,
+        "pos": {
+            "x": 160,
+            "y": 70
+        }
+    },
+    "copyright": {
+        "text": "\u00A9 KONAMI 1982",
+        "center": true,
+        "size": 8,
+        "color": {
+            "r": 255,
+            "g": 255,
+            "b": 255
+        },
+        "pos": {
+            "x": 160,
+            "y": 165
+        }
+    },
+    "push_button": {
+        "text": "PUSH ENTER BUTTON",
+        "size": 8,
+        "color": {
+            "r": 0,
+            "g": 170,
+            "b": 255
+        },
+        "pos": {
+            "x": 92,
+            "y": 100
+        }
+    },
+    "one_player": {
+        "text": "ONE PLAYER ONLY",
+        "size": 8,
+        "color": {
+            "r": 0,
+            "g": 170,
+            "b": 255
+        },
+        "pos": {
+            "x": 92,
+            "y": 110
+        }
+    },
+    "1st_bonus": {
+        "text": "1ST BONUS 10000 PTS.",
+        "size": 8,
+        "color": {
+            "r": 0,
+            "g": 170,
+            "b": 255
+        },
+        "pos": {
+            "x": 92,
+            "y": 130
+        }
+    },
+    "and_pts": {
+        "text": "AND EVERY 50000 PTS.",
+        "size": 8,
+        "color": {
+            "r": 0,
+            "g": 170,
+            "b": 255
+        },
+        "pos": {
+            "x": 92,
+            "y": 140
+        }
+    },
+    "high_score": {
+        "text": "HI-SCORE",
+        "size": 8,
+        "center": true,
+        "color": {
+            "r": 255,
+            "g": 0,
+            "b": 0
+        },
+        "pos": {
+            "x": 160,
+            "y": 5
+        }
+    },
+    "1-UP": {
+        "text": "1-UP",
+        "size": 8,
+        "center": true,
+        "color": {
+            "r": 255,
+            "g": 0,
+            "b": 0
+        },
+        "pos": {
+            "x": 30,
+            "y": 5
+        }
+    },
+    "2-UP": {
+        "text": "2-UP",
+        "size": 8,
+        "center": true,
+        "color": {
+            "r": 255,
+            "g": 0,
+            "b": 0
+        },
+        "pos": {
+            "x": 290,
+            "y": 5
+        }
+    },
+    "credit": {
+        "text": "CREDIT",
+        "size": 8,
+        "color": {
+            "r": 0,
+            "g": 170,
+            "b": 255
+        },
+        "pos": {
+            "x": 250,
+            "y": 182
+        }
+    },
+    "01": {
+        "text": "01",
+        "size": 8,
+        "color": {
+            "r": 255,
+            "g": 255,
+            "b": 255
+        },
+        "pos": {
+            "x": 305,
+            "y": 182
+        }
+    }
+}
