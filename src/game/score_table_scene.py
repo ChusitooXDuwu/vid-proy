@@ -1,6 +1,11 @@
 import json
 
-from src.create.prefab_creator import create_image, create_text_interface
+import pygame
+
+from src.create.prefab_creator import create_image, create_pixel_grid, create_text_interface
+from src.ecs.systems.s_render_pixels import system_render_pixels
+from src.ecs.systems.s_rendering import system_rendering
+from src.ecs.systems.s_reveal_animation import system_reveal_animation
 from src.engine.scenes.scene import Scene
 
 
@@ -14,6 +19,10 @@ class ScoreTableScene(Scene):
 
         self.countdown_time = 4.0
         self.elapsed_time = 0.0
+
+        self.showing_transition = False
+        self.transition_elapsed = 0.0
+        self.transition_duration = 5
 
     def do_create(self):
 
@@ -29,13 +38,35 @@ class ScoreTableScene(Scene):
         create_text_interface(self.ecs_world, self.score_table_cfg, "leaderboard_4th")
         create_text_interface(self.ecs_world, self.score_table_cfg, "leaderboard_5th")
         create_text_interface(self.ecs_world, self.score_table_cfg, "high_score")
+        create_text_interface(self.ecs_world, self.score_table_cfg, 'high_score_10000')
         create_text_interface(self.ecs_world, self.score_table_cfg, "1-UP")
+        create_text_interface(self.ecs_world, self.score_table_cfg, '1-UP_00')
         create_text_interface(self.ecs_world, self.score_table_cfg, "2-UP")
         create_text_interface(self.ecs_world, self.score_table_cfg, "credit")
-        create_text_interface(self.ecs_world, self.score_table_cfg, "00")
+        create_text_interface(self.ecs_world, self.score_table_cfg, "credit_00")
 
     def do_update(self, delta_time: float):
         self.elapsed_time += delta_time
 
-        if self.elapsed_time >= self.countdown_time:
-            self.switch_scene("GAME_SCENE")
+        if not self.showing_transition and self.elapsed_time >= self.countdown_time:
+            self.showing_transition = True
+            self.transition_elapsed = 0.0
+            create_pixel_grid(
+                self.ecs_world,
+                self._game_engine.screen.get_width(),
+                self._game_engine.screen.get_height(),
+                10,
+                pygame.Color(16,4,116)
+            )
+
+        if self.showing_transition:
+            self.transition_elapsed += delta_time
+            self.tick = int(self.transition_elapsed * 60)
+            system_reveal_animation(self.ecs_world, self.tick)
+
+            if self.transition_elapsed >= self.transition_duration:
+                self.switch_scene("GAME_SCENE")
+
+    def do_draw(self, screen):
+        system_rendering(self.ecs_world, screen)
+        system_render_pixels(self.ecs_world, screen)

@@ -5,7 +5,7 @@ import esper
 from src.ecs.components.c_input_command import CInputCommand
 from src.engine.scenes.scene import Scene
 from src.game.game_scene import GameScene
-from src.game.level_01_menu import Level01MenuScene
+from src.game.level_01_menu_scene import Level01MenuScene
 from src.game.menu_scene import MenuScene
 from src.game.score_table_scene import ScoreTableScene
 
@@ -20,7 +20,7 @@ class GameEngine:
         pygame.init()
         pygame.display.set_caption(self.window_cfg["title"])
         self.screen = pygame.display.set_mode(
-            (self.window_cfg["size"]["w"], self.window_cfg["size"]["h"]), 0
+            (self.window_cfg["size"]["w"], self.window_cfg["size"]["h"]), pygame.SCALED
         )
         self._bg_color = pygame.Color(
             self.window_cfg["bg_color"]["r"],

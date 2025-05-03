@@ -3,6 +3,8 @@ import esper
 import math
 
 from src.ecs.components.c_animation import CAnimation
+from src.ecs.components.c_pixel import CPixel
+from src.ecs.components.c_reveal import CReveal
 from src.ecs.components.c_rotation import CRotation
 from src.ecs.components.c_speed import CSpeed
 from src.ecs.components.c_surface import CSurface
@@ -145,3 +147,26 @@ def create_clouds(
         cloud_entity = create_sprite(ecs_world, pos, vel, cloud_sprite, vel)
         ecs_world.add_component(cloud_entity, CTagCloud())
         ecs_world.add_component(cloud_entity, CSpeed(cloud_info["speed"]))
+
+
+def create_pixel_grid(ecs_world: esper.World, width: int, height: int, pixel_size: int, color: pygame.Color):
+    center_x = width // 2
+    center_y = height // 2
+    delay_per_degree = 0.8
+    for row in range(0, height, pixel_size):
+        for col in range(0, width, pixel_size):
+            dx = col + pixel_size // 2 - center_x
+            dy = row + pixel_size // 2 - center_y
+
+            angle_rad = math.atan2(-dy, dx)
+            angle_deg = (math.degrees(angle_rad) + 360) % 360
+
+            angle_from_top = (angle_deg - 90 + 360) % 360
+
+            delay = int(angle_from_top * delay_per_degree)
+
+            ecs_world.create_entity(
+                CTransform(pygame.Vector2(col, row)),
+                CPixel(pixel_size, color),
+                CReveal(delay)
+            )
