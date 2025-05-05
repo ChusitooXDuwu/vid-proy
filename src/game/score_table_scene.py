@@ -2,7 +2,11 @@ import json
 
 import pygame
 
-from src.create.prefab_creator import create_image, create_pixel_grid, create_text_interface
+from src.create.prefab_creator import (
+    create_image,
+    create_pixel_grid,
+    create_text_interface,
+)
 from src.ecs.systems.s_render_pixels import system_render_pixels
 from src.ecs.systems.s_rendering import system_rendering
 from src.ecs.systems.s_reveal_animation import system_reveal_animation
@@ -38,9 +42,9 @@ class ScoreTableScene(Scene):
         create_text_interface(self.ecs_world, self.score_table_cfg, "leaderboard_4th")
         create_text_interface(self.ecs_world, self.score_table_cfg, "leaderboard_5th")
         create_text_interface(self.ecs_world, self.score_table_cfg, "high_score")
-        create_text_interface(self.ecs_world, self.score_table_cfg, 'high_score_10000')
+        create_text_interface(self.ecs_world, self.score_table_cfg, "high_score_10000")
         create_text_interface(self.ecs_world, self.score_table_cfg, "1-UP")
-        create_text_interface(self.ecs_world, self.score_table_cfg, '1-UP_00')
+        create_text_interface(self.ecs_world, self.score_table_cfg, "1-UP_00")
         create_text_interface(self.ecs_world, self.score_table_cfg, "2-UP")
         create_text_interface(self.ecs_world, self.score_table_cfg, "credit")
         create_text_interface(self.ecs_world, self.score_table_cfg, "credit_00")
@@ -56,7 +60,7 @@ class ScoreTableScene(Scene):
                 self._game_engine.screen.get_width(),
                 self._game_engine.screen.get_height(),
                 10,
-                pygame.Color(16,4,116)
+                pygame.Color(16, 4, 116),  # TODO: use color from config
             )
 
         if self.showing_transition:

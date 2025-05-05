@@ -48,7 +48,6 @@ class GameEngine:
         self._scenes["LEVEL_01_INTRO_SCENE"] = Level01IntroScene(self)
         self._scenes["LEVEL_01_MENU_SCENE"] = Level01MenuScene(self)
         self._scenes["GAME_SCENE"] = GameScene(self)
-        self._scenes["LEVEL_01_SCENE"] = None
 
         self._current_scene: Scene = None
         self._scene_name_to_switch: str = None

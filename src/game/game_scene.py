@@ -7,6 +7,7 @@ from src.ecs.components.c_rotation import RotationEnum
 from src.ecs.systems.s_animation import system_animation
 from src.ecs.systems.s_cloud_respawner import system_cloud_respawner
 from src.ecs.systems.s_movement import system_movement
+from src.ecs.systems.s_player_state import system_player_state
 from src.ecs.systems.s_rotation_update import system_rotation_update
 from src.engine.scenes.scene import Scene
 
@@ -25,6 +26,15 @@ class GameScene(Scene):
 
         self._pending_direction = RotationEnum.NONE
         self.player_entity = None
+        self._bg_color = pygame.Color(
+            self.level_info["bg"]["color"]["r"],
+            self.level_info["bg"]["color"]["g"],
+            self.level_info["bg"]["color"]["b"],
+        )
+
+    def do_draw(self, screen):
+        screen.fill(self._bg_color)
+        return super().do_draw(screen)
 
     def do_create(self):
         create_clouds(
@@ -56,9 +66,11 @@ class GameScene(Scene):
             right_action, CInputCommand("PLAYER_RIGHT", pygame.K_RIGHT)
         )
         create_text_interface(self.ecs_world, self.level_01_intro_cfg, "high_score")
-        create_text_interface(self.ecs_world, self.level_01_intro_cfg, 'high_score_10000')
+        create_text_interface(
+            self.ecs_world, self.level_01_intro_cfg, "high_score_10000"
+        )
         create_text_interface(self.ecs_world, self.level_01_intro_cfg, "1-UP")
-        create_text_interface(self.ecs_world, self.level_01_intro_cfg, '1-UP_00')
+        create_text_interface(self.ecs_world, self.level_01_intro_cfg, "1-UP_00")
         create_text_interface(self.ecs_world, self.level_01_intro_cfg, "2-UP")
 
     def do_action(self, action: CInputCommand):
@@ -75,3 +87,4 @@ class GameScene(Scene):
         system_cloud_respawner(self.ecs_world, self.screen_rect)
         system_movement(self.ecs_world, delta_time, self.player_entity)
         system_rotation_update(self.ecs_world, delta_time, self._pending_direction)
+        system_player_state(self.ecs_world)
