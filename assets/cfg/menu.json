@@ -1,0 +1,140 @@
+{
+    "font": "assets/fnt/PressStart2P.ttf",
+    "play_prompt": {
+        "text": "PLAY",
+        "center": true,
+        "size": 8,
+        "color": {
+            "r": 0,
+            "g": 170,
+            "b": 255
+        },
+        "pos": {
+            "x": 160,
+            "y": 50
+        }
+    },
+    "logo": {
+        "image": "assets/img/logo.png",
+        "center": true,
+        "pos": {
+            "x": 160,
+            "y": 70
+        }
+    },
+    "copyright": {
+        "text": "\u00A9 KONAMI 1982",
+        "center": true,
+        "size": 8,
+        "color": {
+            "r": 255,
+            "g": 255,
+            "b": 255
+        },
+        "pos": {
+            "x": 160,
+            "y": 165
+        }
+    },
+    "insert_coin": {
+        "text": "PLEASE PUSH ENTER",
+        "size": 8,
+        "center": true,
+        "color": {
+            "r": 0,
+            "g": 170,
+            "b": 255
+        },
+        "pos": {
+            "x": 160,
+            "y": 95
+        }
+    },
+    "try_game": {
+        "text": "AND TRY THIS GAME",
+        "size": 8,
+        "center": true,
+        "color": {
+            "r": 255,
+            "g": 0,
+            "b": 0
+        },
+        "pos": {
+            "x": 160,
+            "y": 110
+        }
+    },
+    "high_score": {
+        "text": "HI-SCORE",
+        "font": "assets/fnt/PressStart2P.ttf",
+        "size": 8,
+        "center": true,
+        "color": {
+            "r": 255,
+            "g": 0,
+            "b": 0
+        },
+        "pos": {
+            "x": 160,
+            "y": 5
+        }
+    },
+    "1-UP": {
+        "text": "1-UP",
+        "font": "assets/fnt/PressStart2P.ttf",
+        "size": 8,
+        "center": true,
+        "color": {
+            "r": 255,
+            "g": 0,
+            "b": 0
+        },
+        "pos": {
+            "x": 30,
+            "y": 5
+        }
+    },
+    "2-UP": {
+        "text": "2-UP",
+        "font": "assets/fnt/PressStart2P.ttf",
+        "size": 8,
+        "center": true,
+        "color": {
+            "r": 255,
+            "g": 0,
+            "b": 0
+        },
+        "pos": {
+            "x": 290,
+            "y": 5
+        }
+    },
+    "credit": {
+        "text": "CREDIT",
+        "font": "assets/fnt/PressStart2P.ttf",
+        "size": 8,
+        "color": {
+            "r": 0,
+            "g": 170,
+            "b": 255
+        },
+        "pos": {
+            "x": 250,
+            "y": 182
+        }
+    },
+    "00": {
+        "text": "00",
+        "font": "assets/fnt/PressStart2P.ttf",
+        "size": 8,
+        "color": {
+            "r": 255,
+            "g": 255,
+            "b": 255
+        },
+        "pos": {
+            "x": 305,
+            "y": 182
+        }
+    }
+}

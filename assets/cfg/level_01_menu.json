@@ -1,0 +1,185 @@
+{
+    "font": "assets/fnt/PressStart2P.ttf",
+    "play_prompt": {
+        "text": "PLAY",
+        "center": true,
+        "size": 8,
+        "color": {
+            "r": 0,
+            "g": 170,
+            "b": 255
+        },
+        "pos": {
+            "x": 112,
+            "y": 50
+        }
+    },
+    "logo": {
+        "image": "assets/img/logo.png",
+        "center": true,
+        "pos": {
+            "x": 113,
+            "y": 70
+        }
+    },
+    "copyright": {
+        "text": "\u00A9 UNIANDES 2025",
+        "center": true,
+        "size": 8,
+        "color": {
+            "r": 255,
+            "g": 255,
+            "b": 255
+        },
+        "pos": {
+            "x": 115,
+            "y": 230
+        }
+    },
+    "push_button": {
+        "text": "PUSH ENTER BUTTON",
+        "size": 8,
+        "color": {
+            "r": 0,
+            "g": 170,
+            "b": 255
+        },
+        "pos": {
+            "x": 45,
+            "y": 100
+        }
+    },
+    "one_player": {
+        "text": "ONE PLAYER ONLY",
+        "size": 8,
+        "color": {
+            "r": 255,
+            "g": 0,
+            "b": 0
+        },
+        "pos": {
+            "x": 55,
+            "y": 115
+        }
+    },
+    "1st_bonus": {
+        "text": "1ST BONUS 10000 PTS.",
+        "size": 8,
+        "color": {
+            "r": 0,
+            "g": 170,
+            "b": 255
+        },
+        "pos": {
+            "x": 35,
+            "y": 150
+        }
+    },
+    "and_pts": {
+        "text": "AND EVERY 50000 PTS.",
+        "size": 8,
+        "color": {
+            "r": 0,
+            "g": 170,
+            "b": 255
+        },
+        "pos": {
+            "x": 35,
+            "y": 165
+        }
+    },
+    "high_score": {
+        "text": "HI-SCORE",
+        "size": 8,
+        "center": true,
+        "color": {
+            "r": 255,
+            "g": 0,
+            "b": 0
+        },
+        "pos": {
+            "x": 112,
+            "y": 5
+        }
+    },
+    "high_score_10000": {
+        "text": "10000",
+        "size": 8,
+        "color": {
+            "r": 255,
+            "g": 255,
+            "b": 255
+        },
+        "pos": {
+            "x": 95,
+            "y": 10
+        }
+    },
+    "1-UP": {
+        "text": "1-UP",
+        "size": 8,
+        "center": true,
+        "color": {
+            "r": 255,
+            "g": 0,
+            "b": 0
+        },
+        "pos": {
+            "x": 30,
+            "y": 5
+        }
+    },
+    "1-UP_00": {
+        "text": "00",
+        "size": 8,
+        "color": {
+            "r": 255,
+            "g": 255,
+            "b": 255
+        },
+        "pos": {
+            "x": 35,
+            "y": 10
+        }
+    },
+    "2-UP": {
+        "text": "2-UP",
+        "size": 8,
+        "center": true,
+        "color": {
+            "r": 255,
+            "g": 0,
+            "b": 0
+        },
+        "pos": {
+            "x": 194,
+            "y": 5
+        }
+    },
+    "credit": {
+        "text": "CREDIT",
+        "size": 8,
+        "color": {
+            "r": 0,
+            "g": 170,
+            "b": 255
+        },
+        "pos": {
+            "x": 150,
+            "y": 248
+        }
+    },
+    "credit_00": {
+        "text": "00",
+        "size": 8,
+        "color": {
+            "r": 255,
+            "g": 255,
+            "b": 255
+        },
+        "pos": {
+            "x": 204,
+            "y": 248
+        }
+    }
+}

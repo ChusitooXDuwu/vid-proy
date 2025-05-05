@@ -1,0 +1,102 @@
+{
+    "bg": {
+        "color": {
+            "r": 16,
+            "g": 4,
+            "b": 116
+        }
+    },
+    "player_spawn": {
+        "position": {
+            "x": 112,
+            "y": 128
+        },
+        "player_rotations": 32,
+        "rotation_delay": 0.03
+    },
+    "clouds": {
+        "clouds_front": {
+            "image": "assets/img/clouds_large.png",
+            "speed": 80,
+            "animations": {
+                "number_frames": 4,
+                "list": [
+                    {
+                        "name": "MOVE",
+                        "start": 0,
+                        "end": 0,
+                        "framerate": 1
+                    }
+                ]
+            },
+            "clouds": [
+                {
+                    "x": 40,
+                    "y": 40
+                },
+                {
+                    "x": 280,
+                    "y": 150
+                }
+            ]
+        },
+        "clouds_middle": {
+            "image": "assets/img/clouds_medium_A.png",
+            "speed": 30,
+            "animations": {
+                "number_frames": 4,
+                "list": [
+                    {
+                        "name": "MOVE",
+                        "start": 0,
+                        "end": 0,
+                        "framerate": 1
+                    }
+                ]
+            },
+            "clouds": [
+                {
+                    "x": 20,
+                    "y": 20
+                },
+                {
+                    "x": 90,
+                    "y": 58
+                },
+                {
+                    "x": 160,
+                    "y": 96
+                },
+                {
+                    "x": 230,
+                    "y": 134
+                }
+            ]
+        },
+        "clouds_back": {
+            "image": "assets/img/clouds_small.png",
+            "speed": 15,
+            "animations": {
+                "number_frames": 4,
+                "list": [
+                    {
+                        "name": "MOVE",
+                        "start": 0,
+                        "end": 0,
+                        "framerate": 1
+                    }
+                ]
+            },
+            "clouds": [
+                {
+                    "x": 80,
+                    "y": 50
+                },
+                {
+                    "x": 320,
+                    "y": 30
+                }
+            ]
+        }
+    }
+}

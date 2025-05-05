@@ -1,0 +1,8 @@
+{
+    "python.analysis.typeCheckingMode": "off",
+    "editor.formatOnSave": true,
+    "editor.formatOnPaste": true,
+    "pylint.args": [
+        "--disable=missing-docstring,invalid-name"
+    ]
+}
