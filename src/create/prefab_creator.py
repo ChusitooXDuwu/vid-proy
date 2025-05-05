@@ -204,3 +204,81 @@ def create_pixel_grid(
                 CPixel(pixel_size, color),
                 CReveal(delay),
             )
+
+
+def create_info_bar(world: esper.World, width: int, height: int = 40, pos: pygame.Vector2 = pygame.Vector2(0, 0)) -> int:
+    
+    bar_entity = world.create_entity()
+    color = pygame.Color(0, 0, 0)  
+    
+    surface = pygame.Surface((width, height))
+    surface.fill(color)
+    
+    world.add_component(bar_entity, CTransform(pos))
+    world.add_component(bar_entity, CSurface.from_surface(surface))
+    
+    return bar_entity
+
+def create_top_info_bar(world: esper.World, width: int, height: int = 35) -> int:
+    
+    return create_info_bar(world, width, height, pygame.Vector2(0, 0))
+
+
+def create_life_icon(
+    world: esper.World,
+    player_cfg: dict,
+    pos: pygame.Vector2,
+) -> int:
+    player_sprite = ServiceLocator.images_service.get(player_cfg["image"])
+    width, height = player_sprite.get_size()
+    size = pygame.Vector2(width / player_cfg["animations"]["number_frames"], height)
+    
+    life_entity = world.create_entity()
+ 
+    scale = 1
+    scaled_width = int(size.x * scale)
+    scaled_height = int(size.y * scale)
+    
+
+    frame_rect = pygame.Rect(
+        0, 0, int(size.x), int(size.y)
+    )
+    
+
+    try:
+        frame = player_sprite.subsurface(frame_rect)
+        scaled_frame = pygame.transform.scale(frame, (scaled_width, scaled_height))
+        
+    
+        world.add_component(life_entity, CTransform(pos))
+        world.add_component(life_entity, CSurface.from_surface(scaled_frame))
+    except ValueError as e:
+        print(f"Error creating life icon: {e}")
+    
+    return life_entity
+
+
+def create_enemy_counter(
+    world: esper.World,
+    image_path: str,
+    base_pos: pygame.Vector2,
+    count: int = 6,
+    spacing: int = 20
+) -> list[int]:
+    counter_entities = []
+    
+    
+    counter_sprite = ServiceLocator.images_service.get(image_path)
+    
+    for i in range(count):
+        
+        pos = pygame.Vector2(base_pos.x + (i * spacing), base_pos.y)
+        
+       
+        counter_entity = world.create_entity()
+        world.add_component(counter_entity, CTransform(pos))
+        world.add_component(counter_entity, CSurface.from_surface(counter_sprite))
+        
+        counter_entities.append(counter_entity)
+    
+    return counter_entities
