@@ -1,4 +1,3 @@
-import math
 import json
 import pygame
 from src.create.prefab_creator import create_clouds, create_ship, create_text_interface
