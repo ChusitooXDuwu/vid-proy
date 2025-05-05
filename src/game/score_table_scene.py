@@ -65,7 +65,7 @@ class ScoreTableScene(Scene):
             system_reveal_animation(self.ecs_world, self.tick)
 
             if self.transition_elapsed >= self.transition_duration:
-                self.switch_scene("GAME_SCENE")
+                self.switch_scene("LEVEL_01_INTRO_SCENE")
 
     def do_draw(self, screen):
         system_rendering(self.ecs_world, screen)

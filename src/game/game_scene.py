@@ -1,7 +1,7 @@
 import math
 import json
 import pygame
-from src.create.prefab_creator import create_clouds, create_ship
+from src.create.prefab_creator import create_clouds, create_ship, create_text_interface
 from src.ecs.components.c_input_command import CInputCommand, CommandPhase
 from src.ecs.components.c_rotation import RotationEnum
 from src.ecs.systems.s_animation import system_animation
@@ -15,6 +15,8 @@ class GameScene(Scene):
     def __init__(self, engine: "src.engine.game_engine.GameEngine") -> None:
         super().__init__(engine)
 
+        with open("assets/cfg/level_01_intro.json") as intro_file:
+            self.level_01_intro_cfg = json.load(intro_file)
         with open("assets/cfg/level_01.json", encoding="utf-8") as file:
             self.level_info = json.load(file)
         with open("assets/cfg/player.json", encoding="utf-8") as file:
@@ -53,6 +55,11 @@ class GameScene(Scene):
         self.ecs_world.add_component(
             right_action, CInputCommand("PLAYER_RIGHT", pygame.K_RIGHT)
         )
+        create_text_interface(self.ecs_world, self.level_01_intro_cfg, "high_score")
+        create_text_interface(self.ecs_world, self.level_01_intro_cfg, 'high_score_10000')
+        create_text_interface(self.ecs_world, self.level_01_intro_cfg, "1-UP")
+        create_text_interface(self.ecs_world, self.level_01_intro_cfg, '1-UP_00')
+        create_text_interface(self.ecs_world, self.level_01_intro_cfg, "2-UP")
 
     def do_action(self, action: CInputCommand):
         if action.phase == CommandPhase.START:

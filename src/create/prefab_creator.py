@@ -3,6 +3,7 @@ import esper
 import math
 
 from src.ecs.components.c_animation import CAnimation
+from src.ecs.components.c_color_cycle import CColorCycle
 from src.ecs.components.c_pixel import CPixel
 from src.ecs.components.c_reveal import CReveal
 from src.ecs.components.c_rotation import CRotation
@@ -78,6 +79,15 @@ def create_text_interface(
         world, interface_info[interface_type]["text"], font, color, pos, center
     )
 
+def create_text_interface_with_color_cycle(
+    world: esper.World, interface_info: dict, interface_type: str
+) -> int:
+    entity = create_text_interface(world, interface_info, interface_type)
+
+    colors = [pygame.Color(255, 255, 255), pygame.Color(255, 0, 0), pygame.Color(0, 0, 255)]
+    world.add_component(entity, CColorCycle(colors, 0.3))
+
+    return entity
 
 def create_image(world: esper.World, interface_info: dict, image_type: str) -> int:
     surface = ServiceLocator.images_service.get(interface_info[image_type]["image"])
@@ -135,15 +145,23 @@ def create_logo(world: esper.World, logo_info: dict) -> int:
 def create_clouds(
     ecs_world: esper.World,
     cloud_info: dict,
+    padding_top=30,
+    padding_bottom=10
 ) -> int:
     cloud_sprite = ServiceLocator.images_service.get(cloud_info["image"])
 
+    screen_height = pygame.display.get_surface().get_height()
+    min_y = padding_top
+    max_y = screen_height - padding_bottom
+
     for cloud_pos in cloud_info["clouds"]:
+        x = cloud_pos["x"]
+        y = cloud_pos["y"]
+
+        y = max(min_y, min(y, max_y))
+
         vel = pygame.Vector2(cloud_info["speed"], cloud_info["speed"])
-        pos = pygame.Vector2(
-            cloud_pos["x"],
-            cloud_pos["y"],
-        )
+        pos = pygame.Vector2(x, y)
         cloud_entity = create_sprite(ecs_world, pos, vel, cloud_sprite, vel)
         ecs_world.add_component(cloud_entity, CTagCloud())
         ecs_world.add_component(cloud_entity, CSpeed(cloud_info["speed"]))
