@@ -5,4 +5,4 @@ from src.engine.game_engine import GameEngine
 
 if __name__ == "__main__":
     engine = GameEngine()
-    engine.run("GAME_SCENE")
+    engine.run("LEVEL_01_MENU_SCENE")
