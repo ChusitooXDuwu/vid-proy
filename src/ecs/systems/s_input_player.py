@@ -1,16 +1,20 @@
+from typing import Callable
 import pygame
 import esper
 
-from typing import Callable
 
 from src.ecs.components.c_input_command import CInputCommand, CommandPhase
 
 
-def system_input_player (ecs_world: esper.World, event: pygame.event.Event, do_action: Callable[[CInputCommand], None]):
+def system_input_player(
+    ecs_world: esper.World,
+    event: pygame.event.Event,
+    do_action: Callable[[CInputCommand], None],
+):
     """
     System to handle player input events and trigger actions based on them.
     """
-    
+
     components = ecs_world.get_component(CInputCommand)
     for _, c_input in components:
         if event.type == pygame.KEYDOWN and c_input.key == event.key:
@@ -21,7 +25,7 @@ def system_input_player (ecs_world: esper.World, event: pygame.event.Event, do_a
             do_action(c_input)
         elif event.type == pygame.MOUSEBUTTONDOWN and c_input.key == event.button:
             c_input.phase = CommandPhase.START
-            mouse_pos =  pygame.mouse.get_pos()
+            mouse_pos = pygame.mouse.get_pos()
             c_input.mouse_pos.x = mouse_pos[0]
             c_input.mouse_pos.y = mouse_pos[1]
             do_action(c_input)
@@ -33,9 +37,7 @@ def system_input_player (ecs_world: esper.World, event: pygame.event.Event, do_a
             do_action(c_input)
         elif event.type == pygame.MOUSEMOTION and c_input.key == pygame.MOUSEMOTION:
             c_input.phase = CommandPhase.NA
-            mouse_pos =  pygame.mouse.get_pos()
+            mouse_pos = pygame.mouse.get_pos()
             c_input.mouse_pos.x = mouse_pos[0]
             c_input.mouse_pos.y = mouse_pos[1]
             do_action(c_input)
-            
-    

@@ -1,0 +1,201 @@
+{
+    "image": "assets/img/player.png",
+    "animations": {
+        "number_frames": 32,
+        "list": [
+            {
+                "name": "MOVE0",
+                "start": 23,
+                "end": 23,
+                "framerate": 1
+            },
+            {
+                "name": "MOVE1",
+                "start": 22,
+                "end": 22,
+                "framerate": 1
+            },
+            {
+                "name": "MOVE2",
+                "start": 21,
+                "end": 21,
+                "framerate": 1
+            },
+            {
+                "name": "MOVE3",
+                "start": 20,
+                "end": 20,
+                "framerate": 1
+            },
+            {
+                "name": "MOVE4",
+                "start": 19,
+                "end": 19,
+                "framerate": 1
+            },
+            {
+                "name": "MOVE5",
+                "start": 18,
+                "end": 18,
+                "framerate": 1
+            },
+            {
+                "name": "MOVE6",
+                "start": 17,
+                "end": 17,
+                "framerate": 1
+            },
+            {
+                "name": "MOVE7",
+                "start": 16,
+                "end": 16,
+                "framerate": 1
+            },
+            {
+                "name": "MOVE8",
+                "start": 15,
+                "end": 15,
+                "framerate": 1
+            },
+            {
+                "name": "MOVE9",
+                "start": 14,
+                "end": 14,
+                "framerate": 1
+            },
+            {
+                "name": "MOVE10",
+                "start": 13,
+                "end": 13,
+                "framerate": 1
+            },
+            {
+                "name": "MOVE11",
+                "start": 12,
+                "end": 12,
+                "framerate": 1
+            },
+            {
+                "name": "MOVE12",
+                "start": 11,
+                "end": 11,
+                "framerate": 1
+            },
+            {
+                "name": "MOVE13",
+                "start": 10,
+                "end": 10,
+                "framerate": 1
+            },
+            {
+                "name": "MOVE14",
+                "start": 9,
+                "end": 9,
+                "framerate": 1
+            },
+            {
+                "name": "MOVE15",
+                "start": 8,
+                "end": 8,
+                "framerate": 1
+            },
+            {
+                "name": "MOVE16",
+                "start": 7,
+                "end": 7,
+                "framerate": 1
+            },
+            {
+                "name": "MOVE17",
+                "start": 6,
+                "end": 6,
+                "framerate": 1
+            },
+            {
+                "name": "MOVE18",
+                "start": 5,
+                "end": 5,
+                "framerate": 1
+            },
+            {
+                "name": "MOVE19",
+                "start": 4,
+                "end": 4,
+                "framerate": 1
+            },
+            {
+                "name": "MOVE20",
+                "start": 3,
+                "end": 3,
+                "framerate": 1
+            },
+            {
+                "name": "MOVE21",
+                "start": 2,
+                "end": 2,
+                "framerate": 1
+            },
+            {
+                "name": "MOVE22",
+                "start": 1,
+                "end": 1,
+                "framerate": 1
+            },
+            {
+                "name": "MOVE23",
+                "start": 0,
+                "end": 0,
+                "framerate": 1
+            },
+            {
+                "name": "MOVE24",
+                "start": 31,
+                "end": 31,
+                "framerate": 1
+            },
+            {
+                "name": "MOVE25",
+                "start": 30,
+                "end": 30,
+                "framerate": 1
+            },
+            {
+                "name": "MOVE26",
+                "start": 29,
+                "end": 29,
+                "framerate": 1
+            },
+            {
+                "name": "MOVE27",
+                "start": 28,
+                "end": 28,
+                "framerate": 1
+            },
+            {
+                "name": "MOVE28",
+                "start": 27,
+                "end": 27,
+                "framerate": 1
+            },
+            {
+                "name": "MOVE29",
+                "start": 26,
+                "end": 26,
+                "framerate": 1
+            },
+            {
+                "name": "MOVE30",
+                "start": 25,
+                "end": 25,
+                "framerate": 1
+            },
+            {
+                "name": "MOVE31",
+                "start": 24,
+                "end": 24,
+                "framerate": 1
+            }
+        ]
+    },
+    "input_velocity": 100
+}
