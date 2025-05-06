@@ -1,6 +1,6 @@
 import json
 import src
-from src.create.prefab_creator import create_clouds, create_ship, create_text_interface, create_text_interface_with_color_cycle
+from src.create.prefab_creator import create_clouds, create_image, create_ship, create_text_interface, create_text_interface_with_color_cycle
 from src.ecs.components.c_input_command import CInputCommand
 from src.ecs.components.c_rotation import RotationEnum
 from src.ecs.systems.s_animation import system_animation
@@ -49,6 +49,7 @@ class Level01IntroScene(Scene):
             self.ecs_world,
             self.level_info["clouds"]["clouds_front"],
         )
+        create_image(self.ecs_world, self.level_01_intro_cfg, "small_level_counter")
         create_text_interface(self.ecs_world, self.level_01_intro_cfg, "player_1")
         create_text_interface_with_color_cycle(self.ecs_world, self.level_01_intro_cfg, 'a_d_1910')
         create_text_interface(self.ecs_world, self.level_01_intro_cfg, "stage_1")

@@ -24,6 +24,7 @@ class Level01MenuScene(Scene):
         self.elapsed_time = 0.0
 
         create_image(self.ecs_world, self.level_01_menu_cfg, "logo")
+        create_image(self.ecs_world, self.level_01_menu_cfg, "small_level_counter")
         create_text_interface(self.ecs_world, self.level_01_menu_cfg, "play_prompt")
         create_text_interface(self.ecs_world, self.level_01_menu_cfg, "copyright")
         create_text_interface(self.ecs_world, self.level_01_menu_cfg, "push_button")

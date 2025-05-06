@@ -10,7 +10,7 @@
             "b": 255
         },
         "pos": {
-            "x": 160,
+            "x": 112,
             "y": 50
         }
     },
@@ -18,12 +18,12 @@
         "image": "assets/img/logo.png",
         "center": true,
         "pos": {
-            "x": 160,
+            "x": 113,
             "y": 70
         }
     },
     "copyright": {
-        "text": "\u00A9 KONAMI 1982",
+        "text": "\u00A9 UNIANDES 2025",
         "center": true,
         "size": 8,
         "color": {
@@ -32,8 +32,8 @@
             "b": 255
         },
         "pos": {
-            "x": 160,
-            "y": 165
+            "x": 115,
+            "y": 230
         }
     },
     "insert_coin": {
@@ -46,8 +46,8 @@
             "b": 255
         },
         "pos": {
-            "x": 160,
-            "y": 95
+            "x": 112,
+            "y": 100
         }
     },
     "try_game": {
@@ -60,13 +60,12 @@
             "b": 0
         },
         "pos": {
-            "x": 160,
-            "y": 110
+            "x": 112,
+            "y": 120
         }
     },
     "high_score": {
         "text": "HI-SCORE",
-        "font": "assets/fnt/PressStart2P.ttf",
         "size": 8,
         "center": true,
         "color": {
@@ -75,13 +74,25 @@
             "b": 0
         },
         "pos": {
-            "x": 160,
+            "x": 112,
             "y": 5
+        }
+    },
+    "high_score_10000": {
+        "text": "10000",
+        "size": 8,
+        "color": {
+            "r": 255,
+            "g": 255,
+            "b": 255
+        },
+        "pos": {
+            "x": 95,
+            "y": 10
         }
     },
     "1-UP": {
         "text": "1-UP",
-        "font": "assets/fnt/PressStart2P.ttf",
         "size": 8,
         "center": true,
         "color": {
@@ -94,9 +105,21 @@
             "y": 5
         }
     },
+    "1-UP_00": {
+        "text": "00",
+        "size": 8,
+        "color": {
+            "r": 255,
+            "g": 255,
+            "b": 255
+        },
+        "pos": {
+            "x": 35,
+            "y": 10
+        }
+    },
     "2-UP": {
         "text": "2-UP",
-        "font": "assets/fnt/PressStart2P.ttf",
         "size": 8,
         "center": true,
         "color": {
@@ -105,13 +128,12 @@
             "b": 0
         },
         "pos": {
-            "x": 290,
+            "x": 194,
             "y": 5
         }
     },
     "credit": {
         "text": "CREDIT",
-        "font": "assets/fnt/PressStart2P.ttf",
         "size": 8,
         "color": {
             "r": 0,
@@ -119,13 +141,12 @@
             "b": 255
         },
         "pos": {
-            "x": 250,
-            "y": 182
+            "x": 150,
+            "y": 248
         }
     },
-    "00": {
+    "credit_00": {
         "text": "00",
-        "font": "assets/fnt/PressStart2P.ttf",
         "size": 8,
         "color": {
             "r": 255,
@@ -133,8 +154,16 @@
             "b": 255
         },
         "pos": {
-            "x": 305,
-            "y": 182
+            "x": 204,
+            "y": 248
+        }
+    },
+    "small_level_counter": {
+        "image": "assets/img/small_level_counter.png",
+        "center": true,
+        "pos": {
+            "x": 215,
+            "y": 25
         }
     }
 }

@@ -27,13 +27,14 @@ class ScoreTableScene(Scene):
 
         self.showing_transition = False
         self.transition_elapsed = 0.0
-        self.transition_duration = 5
+        self.transition_duration = 2.03
 
     def do_create(self):
 
         self.elapsed_time = 0.0
 
         create_image(self.ecs_world, self.score_table_cfg, "logo")
+        create_image(self.ecs_world, self.score_table_cfg, "small_level_counter")
         create_text_interface(self.ecs_world, self.score_table_cfg, "play_prompt")
         create_text_interface(self.ecs_world, self.score_table_cfg, "copyright")
         create_text_interface(self.ecs_world, self.score_table_cfg, "score_table_label")
@@ -49,6 +50,7 @@ class ScoreTableScene(Scene):
         create_text_interface(self.ecs_world, self.score_table_cfg, "2-UP")
         create_text_interface(self.ecs_world, self.score_table_cfg, "credit")
         create_text_interface(self.ecs_world, self.score_table_cfg, "credit_00")
+        
 
     def do_update(self, delta_time: float):
         self.elapsed_time += delta_time
@@ -66,7 +68,7 @@ class ScoreTableScene(Scene):
 
         if self.showing_transition:
             self.transition_elapsed += delta_time
-            self.tick = int(self.transition_elapsed * 60)
+            self.tick = int(self.transition_elapsed * 150)
             system_reveal_animation(self.ecs_world, self.tick)
 
             if self.transition_elapsed >= self.transition_duration:

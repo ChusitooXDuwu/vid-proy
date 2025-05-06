@@ -134,5 +134,13 @@
             "x": 204,
             "y": 248
         }
+    },
+    "small_level_counter": {
+        "image": "assets/img/small_level_counter.png",
+        "center": true,
+        "pos": {
+            "x": 215,
+            "y": 25
+        }
     }
 }

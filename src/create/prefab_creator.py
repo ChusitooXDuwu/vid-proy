@@ -187,7 +187,7 @@ def create_pixel_grid(
     center_x = width // 2
     center_y = height // 2
     delay_per_degree = 0.8
-    for row in range(0, height, pixel_size):
+    for row in range(10, height, pixel_size):
         for col in range(0, width, pixel_size):
             dx = col + pixel_size // 2 - center_x
             dy = row + pixel_size // 2 - center_y
