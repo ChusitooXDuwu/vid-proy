@@ -2,7 +2,7 @@ import json
 from numpy import spacing
 import pygame
 import src
-from src.create.prefab_creator import create_clouds, create_enemy_counter, create_info_bar, create_life_icon, create_ship, create_text_interface, create_top_info_bar
+from src.create.prefab_creator import create_clouds, create_enemy_counter, create_image, create_info_bar, create_life_icon, create_ship, create_text_interface, create_top_info_bar
 from src.ecs.components.c_input_command import CInputCommand, CommandPhase
 from src.ecs.components.c_rotation import RotationEnum
 from src.ecs.systems.s_animation import system_animation
@@ -24,6 +24,7 @@ class GameScene(Scene):
             self.level_info = json.load(file)
         with open("assets/cfg/player.json", encoding="utf-8") as file:
             self.player_cfg = json.load(file)
+        
         self._player_rotations = self.level_info["player_spawn"]["player_rotations"]
 
         self._pending_direction = RotationEnum.NONE
@@ -76,7 +77,9 @@ class GameScene(Scene):
             right_action, CInputCommand("PLAYER_RIGHT", pygame.K_RIGHT)
         )
         
-     
+        create_image(
+            self.ecs_world, self.level_01_intro_cfg, "small_level_counter"
+        )
         create_text_interface(self.ecs_world, self.level_01_intro_cfg, "high_score")
         create_text_interface(
             self.ecs_world, self.level_01_intro_cfg, "high_score_10000"
