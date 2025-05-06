@@ -58,6 +58,9 @@ class ScoreTableScene(Scene):
         if not self.showing_transition and self.elapsed_time >= self.countdown_time:
             self.showing_transition = True
             self.transition_elapsed = 0.0
+            print("Transitioning to level 01 menu scene")
+            print("Creating pixel grid")
+            print("Screen size: ", self._game_engine.screen.get_width(), self._game_engine.screen.get_height())
             create_pixel_grid(
                 self.ecs_world,
                 self._game_engine.screen.get_width(),

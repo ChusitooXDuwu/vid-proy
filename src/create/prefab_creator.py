@@ -25,6 +25,19 @@ def create_text(
     pos: pygame.Vector2,
     center: bool = False,
 ) -> int:
+    """
+    Creates a text entity in the given ECS world with specified properties.
+    Args:
+        world (esper.World): The ECS world where the entity will be created.
+        text (str): The text to be rendered.
+        font (pygame.font.Font): The font to be used for rendering the text.
+        color (pygame.Color): The color of the text.
+        pos (pygame.Vector2): The position of the text in the world.
+        center (bool, optional): If True, the text will be centered at the given position.
+            Defaults to False.
+    Returns:
+        int: The ID of the created text entity.
+    """
     if center:
         text_surface = font.render(text, True, color)
         text_rect = text_surface.get_rect()
@@ -43,6 +56,19 @@ def create_sprite(
     surface: pygame.Surface,
     center: bool = False,
 ) -> int:
+    """
+    Creates a sprite entity in the ECS world with the specified position, velocity, 
+    and surface. Optionally centers the sprite's position based on its dimensions.
+    Args:
+        ecs_world (esper.World): The ECS world where the entity will be created.
+        pos (pygame.Vector2): The initial position of the sprite.
+        vel (pygame.Vector2): The velocity of the sprite.
+        surface (pygame.Surface): The surface representing the sprite's appearance.
+        center (bool, optional): If True, adjusts the position to center the sprite 
+            based on its dimensions. Defaults to False.
+    Returns:
+        int: The ID of the created sprite entity.
+    """
     if center:
         sprite_rect = surface.get_rect()
         pos = pygame.Vector2(
@@ -57,8 +83,28 @@ def create_sprite(
 
 
 def create_text_interface(
-    world: esper.World, interface_info: dict, interface_type: str
+    world: esper.World, 
+    interface_info: dict, 
+    interface_type: str
 ) -> int:
+    """
+    Creates a text interface entity in the game world.
+    Args:
+        world (esper.World): The ECS (Entity Component System) world where the entity will be created.
+        interface_info (dict): A dictionary containing configuration details for the text interface.
+            Expected keys:
+                - "font": The name of the font to be used.
+                - <interface_type>: A dictionary with the following keys:
+                    - "size" (int): The font size.
+                    - "color" (dict): A dictionary with "r", "g", and "b" keys for the RGB color values.
+                    - "pos" (dict): A dictionary with "x" and "y" keys for the position.
+                    - "text" (str): The text content to display.
+                    - "center" (bool, optional): Whether to center the text. Defaults to False.
+        interface_type (str): The type of interface to create, used as a key to access specific configuration
+            details in the `interface_info` dictionary.
+    Returns:
+        int: The ID of the created entity in the ECS world.
+    """
     font = ServiceLocator.fonts_service.get(
         interface_info["font"], interface_info[interface_type]["size"]
     )
@@ -82,8 +128,24 @@ def create_text_interface(
 
 
 def create_text_interface_with_color_cycle(
-    world: esper.World, interface_info: dict, interface_type: str
+    world: esper.World, 
+    interface_info: dict, 
+    interface_type: str
 ) -> int:
+    """
+    Creates a text interface entity with a color cycling effect.
+    This function creates a text interface entity using the provided world, 
+    interface information, and interface type. It then adds a color cycling 
+    component to the entity, which cycles through a predefined list of colors.
+    Args:
+        world (esper.World): The ECS (Entity Component System) world where the 
+            entity will be created.
+        interface_info (dict): A dictionary containing information about the 
+            text interface to be created.
+        interface_type (str): A string specifying the type of the text interface.
+    Returns:
+        int: The ID of the created entity.
+    """
     entity = create_text_interface(world, interface_info, interface_type)
 
     colors = [
@@ -96,7 +158,30 @@ def create_text_interface_with_color_cycle(
     return entity
 
 
-def create_image(world: esper.World, interface_info: dict, image_type: str) -> int:
+def create_image(
+    world: esper.World, 
+    interface_info: dict, 
+    image_type: str
+) -> int:
+    """
+    Creates a sprite entity in the given ECS world using the specified image type 
+    and interface information.
+
+    Args:
+        world (esper.World): The ECS world where the sprite entity will be created.
+        interface_info (dict): A dictionary containing configuration data for the 
+            sprite, including position and image details.
+            Expected keys:
+                - <interface_type>: A dictionary with the following keys:
+                    - "image" (str): The path of the image to be used.
+                    - "pos" (dict): A dictionary with "x" and "y" keys for the position.
+                    - "center" (bool, optional): Whether to center the text. Defaults to False.
+        image_type (str): The key to access specific image and position data 
+            within the interface_info dictionary.
+
+    Returns:
+        int: The ID of the created sprite entity.
+    """
     surface = ServiceLocator.images_service.get(interface_info[image_type]["image"])
     pos = pygame.Vector2(
         interface_info[image_type]["pos"]["x"], interface_info[image_type]["pos"]["y"]
@@ -107,8 +192,23 @@ def create_image(world: esper.World, interface_info: dict, image_type: str) -> i
 
 
 def create_ship(
-    world: esper.World, player_cfg: dict, level_info: dict, player_rotations: int
+    world: esper.World, 
+    player_cfg: dict, 
+    level_info: dict, 
+    player_rotations: int
 ) -> int:
+    """
+    Creates a player ship entity in the game world with the specified configuration.
+
+    Args:
+        world (esper.World): The ECS (Entity Component System) world where the entity will be created.
+        player_cfg (dict): Configuration dictionary for the player, including image and animation details.
+        level_info (dict): Information about the level, including the initial position and rotation delay.
+        player_rotations (int): Number of rotation directions for the player.
+
+    Returns:
+        int: The ID of the created player entity.
+    """
     player_sprite = ServiceLocator.images_service.get(player_cfg["image"])
     width, height = player_sprite.get_size()
     # Need adjustment for the number of frames
@@ -141,17 +241,28 @@ def create_ship(
     return player_entity
 
 
-def create_logo(world: esper.World, logo_info: dict) -> int:
-    surface = ServiceLocator.images_service.get(logo_info["image"])
-    pos = pygame.Vector2(logo_info["pos"]["x"], logo_info["pos"]["y"])
-    vel = pygame.Vector2(0, 0)
-    center = logo_info.get("center", False)
-    return create_sprite(world, pos, vel, surface, center)
-
-
 def create_clouds(
-    ecs_world: esper.World, cloud_info: dict, padding_top=30, padding_bottom=10
+    ecs_world: esper.World, 
+    cloud_info: dict, 
+    padding_top = 30, 
+    padding_bottom = 10
 ) -> int:
+    """
+    Creates cloud entities in the ECS world based on the provided cloud information.
+    Args:
+        ecs_world (esper.World): The ECS world where the cloud entities will be created.
+        cloud_info (dict): A dictionary containing information about the clouds, including:
+            - "image" (str): The key for the cloud sprite image.
+            - "animations" (dict): Animation details, including "number_frames".
+            - "clouds" (list): A list of dictionaries with cloud positions, each containing:
+                - "x" (float): The x-coordinate of the cloud.
+                - "y" (float): The y-coordinate of the cloud.
+            - "speed" (float): The speed of the clouds.
+        padding_top (int, optional): The minimum distance from the top of the screen. Defaults to 30.
+        padding_bottom (int, optional): The minimum distance from the bottom of the screen. Defaults to 10.
+    Returns:
+        int: The number of cloud entities created.
+    """
     cloud_sprite = ServiceLocator.images_service.get(cloud_info["image"])
     width, height = cloud_sprite.get_size()
     size = pygame.Vector2(width / cloud_info["animations"]["number_frames"], height)
@@ -183,7 +294,19 @@ def create_pixel_grid(
     height: int,
     pixel_size: int,
     color: pygame.Color,
-):
+) -> None:
+    """
+    Creates a grid of pixel entities in the ECS world, with each pixel having a delay
+    for its reveal animation based on its angular position relative to the center.
+    Args:
+        ecs_world (esper.World): The ECS world where the pixel entities will be created.
+        width (int): The width of the grid in pixels.
+        height (int): The height of the grid in pixels.
+        pixel_size (int): The size of each pixel in the grid.
+        color (pygame.Color): The color of the pixels.
+    Each pixel entity is positioned in a grid layout and assigned a delay for its reveal
+    animation based on its angular distance from the top of the grid's center.
+    """
     center_x = width // 2
     center_y = height // 2
     delay_per_degree = 0.8
@@ -206,7 +329,22 @@ def create_pixel_grid(
             )
 
 
-def create_info_bar(world: esper.World, width: int, height: int = 40, pos: pygame.Vector2 = pygame.Vector2(0, 0)) -> int:
+def create_info_bar(
+    world: esper.World, 
+    width: int, 
+    height: int = 40, 
+    pos: pygame.Vector2 = pygame.Vector2(0, 0)
+) -> int:
+    """
+    Creates an information bar entity in the given ECS world.
+    Args:
+        world (esper.World): The ECS world where the entity will be created.
+        width (int): The width of the information bar.
+        height (int, optional): The height of the information bar. Defaults to 40.
+        pos (pygame.Vector2, optional): The position of the information bar. Defaults to (0, 0).
+    Returns:
+        int: The ID of the created entity.
+    """
     
     bar_entity = world.create_entity()
     color = pygame.Color(0, 0, 0)  
@@ -219,23 +357,35 @@ def create_info_bar(world: esper.World, width: int, height: int = 40, pos: pygam
     
     return bar_entity
 
-def create_top_info_bar(world: esper.World, width: int, height: int = 35) -> int:
-    
-    return create_info_bar(world, width, height, pygame.Vector2(0, 0))
-
 
 def create_life_icon(
     world: esper.World,
     player_cfg: dict,
     pos: pygame.Vector2,
 ) -> int:
+    """
+    Creates a life icon entity in the game world.
+    This function generates a life icon entity using the player's sprite and configuration.
+    The icon is scaled and positioned based on the provided parameters.
+    Args:
+        world (esper.World): The ECS (Entity Component System) world where the entity will be created.
+        player_cfg (dict): A dictionary containing the player's configuration, including the sprite image
+            and animation details. Expected keys:
+            - "image": Path or identifier for the player's sprite image.
+            - "animations": A dictionary with animation details, including "number_frames".
+        pos (pygame.Vector2): The position where the life icon should be placed.
+    Returns:
+        int: The ID of the created life icon entity.
+    Raises:
+        ValueError: If there is an issue creating the subsurface for the life icon.
+    """
     player_sprite = ServiceLocator.images_service.get(player_cfg["image"])
     width, height = player_sprite.get_size()
     size = pygame.Vector2(width / player_cfg["animations"]["number_frames"], height)
     
     life_entity = world.create_entity()
  
-    scale = 1
+    scale = 1 # If we want to scale the life icon, we can set this value to something else
     scaled_width = int(size.x * scale)
     scaled_height = int(size.y * scale)
     
@@ -265,9 +415,19 @@ def create_enemy_counter(
     count: int = 6,
     spacing: int = 20
 ) -> list[int]:
+    """
+    Creates a series of enemy counter entities in the game world.
+    Args:
+        world (esper.World): The ECS (Entity Component System) world where the entities will be created.
+        image_path (str): The file path to the image used for the counter sprites.
+        base_pos (pygame.Vector2): The base position where the first counter entity will be placed.
+        count (int, optional): The number of counter entities to create. Defaults to 6.
+        spacing (int, optional): The horizontal spacing between consecutive counter entities. Defaults to 20.
+    Returns:
+        list[int]: A list of entity IDs for the created counter entities.
+    """
     counter_entities = []
-    
-    
+        
     counter_sprite = ServiceLocator.images_service.get(image_path)
     
     for i in range(count):

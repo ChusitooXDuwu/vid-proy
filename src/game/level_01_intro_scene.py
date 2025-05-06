@@ -2,7 +2,7 @@ import json
 
 import pygame
 import src
-from src.create.prefab_creator import create_clouds, create_enemy_counter, create_image, create_info_bar, create_life_icon, create_ship, create_text_interface, create_text_interface_with_color_cycle, create_top_info_bar
+from src.create.prefab_creator import create_clouds, create_enemy_counter, create_image, create_info_bar, create_life_icon, create_ship, create_text_interface, create_text_interface_with_color_cycle
 from src.ecs.components.c_input_command import CInputCommand
 from src.ecs.components.c_rotation import RotationEnum
 from src.ecs.systems.s_animation import system_animation
@@ -61,7 +61,7 @@ class Level01IntroScene(Scene):
             self.level_info["clouds"]["clouds_front"],
         )
         
-        create_top_info_bar(self.ecs_world, self.screen_rect.width)
+        create_info_bar(self.ecs_world, self.screen_rect.width, 35, pygame.Vector2(0, 0))
         bottom_bar_height = 10
         bottom_bar_pos = pygame.Vector2(0, self.screen_rect.height - bottom_bar_height)
         create_info_bar(self.ecs_world, self.screen_rect.width, bottom_bar_height, bottom_bar_pos)
