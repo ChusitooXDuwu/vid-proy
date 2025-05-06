@@ -2,6 +2,7 @@ import json
 
 import pygame
 
+import src
 from src.create.prefab_creator import (
     create_image,
     create_pixel_grid,
@@ -69,7 +70,7 @@ class ScoreTableScene(Scene):
             system_reveal_animation(self.ecs_world, self.tick)
 
             if self.transition_elapsed >= self.transition_duration:
-                self.switch_scene("LEVEL_01_INTRO_SCENE")
+                self.switch_scene("LEVEL_01_MENU_SCENE")
 
     def do_draw(self, screen):
         system_rendering(self.ecs_world, screen)

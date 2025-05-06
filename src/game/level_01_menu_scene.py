@@ -47,4 +47,4 @@ class Level01MenuScene(Scene):
 
     def do_action(self, action: CInputCommand):
         if action.name == "START_GAME":
-            self.switch_scene("MENU_SCENE")
+            self.switch_scene("LEVEL_01_INTRO_SCENE")

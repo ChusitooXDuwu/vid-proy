@@ -1,6 +1,7 @@
 import json
 import pygame
 
+import src
 from src.create.prefab_creator import create_image, create_text_interface
 from src.engine.scenes.scene import Scene
 from src.ecs.components.c_input_command import CInputCommand

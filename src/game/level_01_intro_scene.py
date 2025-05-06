@@ -1,4 +1,5 @@
 import json
+import src
 from src.create.prefab_creator import create_clouds, create_ship, create_text_interface, create_text_interface_with_color_cycle
 from src.ecs.components.c_input_command import CInputCommand
 from src.ecs.components.c_rotation import RotationEnum

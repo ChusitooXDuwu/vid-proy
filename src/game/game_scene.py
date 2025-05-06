@@ -1,6 +1,7 @@
 import json
 from numpy import spacing
 import pygame
+import src
 from src.create.prefab_creator import create_clouds, create_enemy_counter, create_info_bar, create_life_icon, create_ship, create_text_interface, create_top_info_bar
 from src.ecs.components.c_input_command import CInputCommand, CommandPhase
 from src.ecs.components.c_rotation import RotationEnum
