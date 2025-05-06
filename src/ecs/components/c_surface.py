@@ -2,6 +2,23 @@ import pygame
 
 
 class CSurface:
+    """
+    CSurface is a class that encapsulates a pygame.Surface object and provides utility methods
+    for creating and manipulating surfaces.
+    Attributes:
+        surf (pygame.Surface): The surface object associated with this instance.
+        area (pygame.Rect): The rectangular area of the surface.
+    Methods:
+        __init__(size: pygame.Vector2, color: pygame.Color) -> None:
+            Initializes a new CSurface instance with a given size and color.
+        from_surface(surface: pygame.Surface) -> CSurface:
+            Creates a CSurface instance from an existing pygame.Surface object.
+        get_area_relative(area: pygame.Rect, pos_topleft: pygame.Vector2) -> pygame.Rect:
+            Returns a new rectangle with the same dimensions as the given area, but with its
+            top-left position adjusted relative to the specified position.
+        from_text(text: str, font: pygame.font.Font, color: pygame.Color) -> CSurface:
+            Creates a CSurface instance from a text string rendered with a specified font and color.
+    """
     def __init__(self, size: pygame.Vector2, color: pygame.Color) -> None:
         self.surf = pygame.Surface(size)
         self.surf.fill(color)

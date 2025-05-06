@@ -2,6 +2,11 @@ from enum import Enum
 
 
 class CPlayerState:
+    """
+    CPlayerState is a component class that represents the state of a player in the game.
+    Attributes:
+        state (PlayerState): The current state of the player. It is initialized to PlayerState.MOVE0.
+    """
 
     def __init__(self) -> None:
         self.state = PlayerState.MOVE0
