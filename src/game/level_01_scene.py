@@ -87,9 +87,9 @@ class Level01Scene(Scene):
         self.can_shoot = True
         
         
-        fire_action = self.ecs_world.create_entity()
+        fire_action_z = self.ecs_world.create_entity()
         self.ecs_world.add_component(
-            fire_action, CInputCommand("PLAYER_FIRE", pygame.K_p)
+            fire_action_z, CInputCommand("PLAYER_FIRE", pygame.K_z)
         )
 
         create_top_info_bar(self.ecs_world, self.screen_rect.width)
