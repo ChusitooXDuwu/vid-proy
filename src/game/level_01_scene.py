@@ -2,7 +2,7 @@ import json
 from numpy import spacing
 import pygame
 import src
-from src.create.prefab_creator import create_clouds, create_enemy_counter, create_image, create_info_bar, create_life_icon, create_ship, create_text_interface
+from src.create.prefab_creator import create_clouds, create_enemy_counter, create_image, create_info_bar, create_life_icon, create_ship, create_text_interface, create_text_interface_with_color_cycle
 from src.create.prefab_creator import create_bullet, create_clouds, create_enemy_counter, create_image, create_info_bar, create_life_icon, create_ship, create_text_interface, create_top_info_bar
 from src.ecs.components.c_bullet_type import BulletType
 from src.ecs.components.c_input_command import CInputCommand, CommandPhase
@@ -14,6 +14,7 @@ from src.ecs.systems.s_animation import system_animation
 from src.ecs.systems.s_bullet_movement import system_bullet_movement
 from src.ecs.systems.s_cloud_respawner import system_cloud_respawner
 from src.ecs.systems.s_collision_bullet_enemy import system_collision_bullet_enemy
+from src.ecs.systems.s_color_cycle import system_color_cycle
 from src.ecs.systems.s_explosion_animation_end import system_explosion_animation_end
 from src.ecs.systems.s_movement import system_movement
 from src.ecs.systems.s_player_state import system_player_state
@@ -23,7 +24,7 @@ from src.engine.scenes.scene import Scene
 from src.engine.service_locator import ServiceLocator
 
 
-class GameScene(Scene):
+class Level01Scene(Scene):
     def __init__(self, engine: "src.engine.game_engine.GameEngine") -> None:
         super().__init__(engine)
 
@@ -48,6 +49,9 @@ class GameScene(Scene):
             self.level_info["bg"]["color"]["g"],
             self.level_info["bg"]["color"]["b"],
         )
+        
+        self.intro_level_countdown_time = 4.0
+        self.intro_level_elapsed_time = 0.0
 
     def do_draw(self, screen):
         screen.fill(self._bg_color)
@@ -85,7 +89,7 @@ class GameScene(Scene):
         
         fire_action = self.ecs_world.create_entity()
         self.ecs_world.add_component(
-            fire_action, CInputCommand("PLAYER_FIRE", pygame.K_SPACE)
+            fire_action, CInputCommand("PLAYER_FIRE", pygame.K_p)
         )
 
         create_top_info_bar(self.ecs_world, self.screen_rect.width)
@@ -145,17 +149,29 @@ class GameScene(Scene):
        
         create_text_interface(self.ecs_world, self.level_01_intro_cfg, "credit")
         create_text_interface(self.ecs_world, self.level_01_intro_cfg, "credit_00")
-
+        
+        self.a_d_1910 = create_text_interface_with_color_cycle(self.ecs_world, self.level_01_intro_cfg, 'a_d_1910')
+        self.stage_1 = create_text_interface(self.ecs_world, self.level_01_intro_cfg, "stage_1")
+        self.player_1 = create_text_interface(self.ecs_world, self.level_01_intro_cfg, "player_1")
 
 
     def do_action(self, action: CInputCommand):
-        if action.phase == CommandPhase.START:
-            if action.name == "PLAYER_LEFT":
+        
+        if action.name == 'PLAYER_LEFT':
+            if action.phase == CommandPhase.START:
                 self._pending_direction = RotationEnum.LEFT
-            elif action.name == "PLAYER_RIGHT":
+            elif action.phase == CommandPhase.END and self._pending_direction == RotationEnum.LEFT:
+                self._pending_direction = RotationEnum.NONE
+                
+        elif action.name == 'PLAYER_RIGHT':
+            if action.phase == CommandPhase.START:
                 self._pending_direction = RotationEnum.RIGHT
-            elif action.name == "PLAYER_FIRE":  # Remove the redundant condition
-                if self.can_shoot:
+            elif action.phase == CommandPhase.END and self._pending_direction == RotationEnum.RIGHT:
+                self._pending_direction = RotationEnum.NONE
+                
+        elif action.name == 'PLAYER_FIRE':
+            if action.phase == CommandPhase.START:
+                if self.can_shoot and self.intro_level_elapsed_time >= self.intro_level_countdown_time:
                     c_rotation = self.ecs_world.component_for_entity(self.player_entity, CRotation)
                     direction = c_rotation.directions[c_rotation.index]
                     
@@ -169,25 +185,31 @@ class GameScene(Scene):
                     
                     self.can_shoot = False
                     self.bullet_timer = 0.0
-        elif action.phase == CommandPhase.END:
-            if action.name == "PLAYER_LEFT" and self._pending_direction == RotationEnum.LEFT:
-                self._pending_direction = RotationEnum.NONE
-            elif action.name == "PLAYER_RIGHT" and self._pending_direction == RotationEnum.RIGHT:
-                self._pending_direction = RotationEnum.NONE
+            
+            
+            
 
     def do_update(self, delta_time: float):
+        self.intro_level_elapsed_time += delta_time
+        if self.intro_level_elapsed_time >= self.intro_level_countdown_time:
+            if self.ecs_world.entity_exists(self.a_d_1910):
+                self.ecs_world.delete_entity(self.a_d_1910)
+            if self.ecs_world.entity_exists(self.stage_1):
+                self.ecs_world.delete_entity(self.stage_1)
+            if self.ecs_world.entity_exists(self.player_1):
+                self.ecs_world.delete_entity(self.player_1)
+
+        system_color_cycle(self.ecs_world, delta_time, self.level_01_intro_cfg, self.level_01_intro_cfg["a_d_1910"])
         system_animation(self.ecs_world, delta_time)
         system_cloud_respawner(self.ecs_world, self.screen_rect)
         system_movement(self.ecs_world, delta_time, self.player_entity)
         system_rotation_update(self.ecs_world, delta_time, self._pending_direction)
         system_player_state(self.ecs_world)
-
         system_bullet_movement(self.ecs_world, delta_time)
-
         system_screen_boundary_bullet(self.ecs_world, self.screen_rect)
         system_collision_bullet_enemy(self.ecs_world, self.explosion_cfg)
         system_explosion_animation_end(self.ecs_world)
-        
+
         if not self.can_shoot:
             self.bullet_timer += delta_time
             if self.bullet_timer >= self.bullet_cooldown:
