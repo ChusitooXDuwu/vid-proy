@@ -3,14 +3,24 @@ from numpy import spacing
 import pygame
 import src
 from src.create.prefab_creator import create_clouds, create_enemy_counter, create_image, create_info_bar, create_life_icon, create_ship, create_text_interface
+from src.create.prefab_creator import create_bullet, create_clouds, create_enemy_counter, create_image, create_info_bar, create_life_icon, create_ship, create_text_interface, create_top_info_bar
+from src.ecs.components.c_bullet_type import BulletType
 from src.ecs.components.c_input_command import CInputCommand, CommandPhase
-from src.ecs.components.c_rotation import RotationEnum
+from src.ecs.components.c_rotation import CRotation, RotationEnum
+from src.ecs.components.c_surface import CSurface
+from src.ecs.components.c_transform import CTransform
+from src.ecs.components.tags.c_tag_player import CTagPlayer
 from src.ecs.systems.s_animation import system_animation
+from src.ecs.systems.s_bullet_movement import system_bullet_movement
 from src.ecs.systems.s_cloud_respawner import system_cloud_respawner
+from src.ecs.systems.s_collision_bullet_enemy import system_collision_bullet_enemy
+from src.ecs.systems.s_explosion_animation_end import system_explosion_animation_end
 from src.ecs.systems.s_movement import system_movement
 from src.ecs.systems.s_player_state import system_player_state
 from src.ecs.systems.s_rotation_update import system_rotation_update
+from src.ecs.systems.s_screen_boundary_bullet import system_screen_boundary_bullet
 from src.engine.scenes.scene import Scene
+from src.engine.service_locator import ServiceLocator
 
 
 class GameScene(Scene):
@@ -23,7 +33,12 @@ class GameScene(Scene):
             self.level_info = json.load(file)
         with open("assets/cfg/player.json", encoding="utf-8") as file:
             self.player_cfg = json.load(file)
-        
+
+        with open("assets/cfg/explosion.json", encoding="utf-8") as file:
+            self.explosion_cfg = json.load(file)
+        with open("assets/cfg/bullet.json", encoding="utf-8") as file:
+            self.bullet_cfg = json.load(file)
+
         self._player_rotations = self.level_info["player_spawn"]["player_rotations"]
 
         self._pending_direction = RotationEnum.NONE
@@ -42,10 +57,12 @@ class GameScene(Scene):
         create_clouds(
             self.ecs_world,
             self.level_info["clouds"]["clouds_back"],
+            25,
         )
         create_clouds(
             self.ecs_world,
             self.level_info["clouds"]["clouds_middle"],
+            30,
         )
         self.player_entity = create_ship(
             self.ecs_world,
@@ -56,15 +73,23 @@ class GameScene(Scene):
         create_clouds(
             self.ecs_world,
             self.level_info["clouds"]["clouds_front"],
+            35,
         )
 
-        create_info_bar(
-            self.ecs_world,
-            self.screen_rect.width,
-            35,
-            pygame.Vector2(0, 0)
-        )
+   
         
+        self.bullet_timer = 0.0
+        self.bullet_cooldown = 0.0001  
+        self.can_shoot = True
+        
+        
+        fire_action = self.ecs_world.create_entity()
+        self.ecs_world.add_component(
+            fire_action, CInputCommand("PLAYER_FIRE", pygame.K_SPACE)
+        )
+
+        create_top_info_bar(self.ecs_world, self.screen_rect.width)
+
         
         bottom_bar_height = 10
         bottom_bar_pos = pygame.Vector2(0, self.screen_rect.height - bottom_bar_height)
@@ -81,8 +106,10 @@ class GameScene(Scene):
         )
         
         create_image(
-            self.ecs_world, self.level_01_intro_cfg, "small_level_counter"
+            self.ecs_world, self.level_01_intro_cfg, 100, "small_level_counter"
         )
+
+     
         create_text_interface(self.ecs_world, self.level_01_intro_cfg, "high_score")
         create_text_interface(
             self.ecs_world, self.level_01_intro_cfg, "high_score_10000"
@@ -120,14 +147,33 @@ class GameScene(Scene):
         create_text_interface(self.ecs_world, self.level_01_intro_cfg, "credit_00")
 
 
+
     def do_action(self, action: CInputCommand):
         if action.phase == CommandPhase.START:
             if action.name == "PLAYER_LEFT":
                 self._pending_direction = RotationEnum.LEFT
             elif action.name == "PLAYER_RIGHT":
                 self._pending_direction = RotationEnum.RIGHT
+            elif action.name == "PLAYER_FIRE":  # Remove the redundant condition
+                if self.can_shoot:
+                    c_rotation = self.ecs_world.component_for_entity(self.player_entity, CRotation)
+                    direction = c_rotation.directions[c_rotation.index]
+                    
+                    create_bullet(
+                        self.ecs_world,        
+                        direction,              
+                        self.player_entity,     
+                        self.bullet_cfg,        
+                        1                       
+                    )
+                    
+                    self.can_shoot = False
+                    self.bullet_timer = 0.0
         elif action.phase == CommandPhase.END:
-            self._pending_direction = RotationEnum.NONE
+            if action.name == "PLAYER_LEFT" and self._pending_direction == RotationEnum.LEFT:
+                self._pending_direction = RotationEnum.NONE
+            elif action.name == "PLAYER_RIGHT" and self._pending_direction == RotationEnum.RIGHT:
+                self._pending_direction = RotationEnum.NONE
 
     def do_update(self, delta_time: float):
         system_animation(self.ecs_world, delta_time)
@@ -135,3 +181,14 @@ class GameScene(Scene):
         system_movement(self.ecs_world, delta_time, self.player_entity)
         system_rotation_update(self.ecs_world, delta_time, self._pending_direction)
         system_player_state(self.ecs_world)
+
+        system_bullet_movement(self.ecs_world, delta_time)
+
+        system_screen_boundary_bullet(self.ecs_world, self.screen_rect)
+        system_collision_bullet_enemy(self.ecs_world, self.explosion_cfg)
+        system_explosion_animation_end(self.ecs_world)
+        
+        if not self.can_shoot:
+            self.bullet_timer += delta_time
+            if self.bullet_timer >= self.bullet_cooldown:
+                self.can_shoot = True

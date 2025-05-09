@@ -45,10 +45,12 @@ class Level01IntroScene(Scene):
         create_clouds(
             self.ecs_world,
             self.level_info["clouds"]["clouds_back"],
+            25,
         )
         create_clouds(
             self.ecs_world,
             self.level_info["clouds"]["clouds_middle"],
+            30, 
         )
         self.player_entity = create_ship(
             self.ecs_world,
@@ -59,6 +61,7 @@ class Level01IntroScene(Scene):
         create_clouds(
             self.ecs_world,
             self.level_info["clouds"]["clouds_front"],
+            35,
         )
         
         create_info_bar(self.ecs_world, self.screen_rect.width, 35, pygame.Vector2(0, 0))
@@ -68,7 +71,7 @@ class Level01IntroScene(Scene):
 
 
         
-        create_image(self.ecs_world, self.level_01_intro_cfg, "small_level_counter")
+        create_image(self.ecs_world, self.level_01_intro_cfg, 100, "small_level_counter")
         create_text_interface(self.ecs_world, self.level_01_intro_cfg, "player_1")
         create_text_interface_with_color_cycle(self.ecs_world, self.level_01_intro_cfg, 'a_d_1910')
         create_text_interface(self.ecs_world, self.level_01_intro_cfg, "stage_1")

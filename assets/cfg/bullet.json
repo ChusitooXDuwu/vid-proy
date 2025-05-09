@@ -1,0 +1,10 @@
+{
+    "sound": "assets/snd/player_shoot.ogg",
+    "velocity": 300,
+    "images": {
+        "normal": "assets/img/bullet_01_02_03.png",
+        "special": "assets/img/bullet_01_02_03.png",
+        "super": "assets/img/bullet_01_02_03.png"
+    },
+    "cooldown": 0.2
+}

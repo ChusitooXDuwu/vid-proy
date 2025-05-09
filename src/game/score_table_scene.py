@@ -33,8 +33,8 @@ class ScoreTableScene(Scene):
 
         self.elapsed_time = 0.0
 
-        create_image(self.ecs_world, self.score_table_cfg, "logo")
-        create_image(self.ecs_world, self.score_table_cfg, "small_level_counter")
+        create_image(self.ecs_world, self.score_table_cfg, 100, "logo")
+        create_image(self.ecs_world, self.score_table_cfg, 100, "small_level_counter")
         create_text_interface(self.ecs_world, self.score_table_cfg, "play_prompt")
         create_text_interface(self.ecs_world, self.score_table_cfg, "copyright")
         create_text_interface(self.ecs_world, self.score_table_cfg, "score_table_label")
