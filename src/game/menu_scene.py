@@ -17,8 +17,8 @@ class MenuScene(Scene):
 
     def do_create(self):
 
-        create_image(self.ecs_world, self.menu_cfg, "logo")
-        create_image(self.ecs_world, self.menu_cfg, "small_level_counter")
+        create_image(self.ecs_world, self.menu_cfg, 100, "logo")
+        create_image(self.ecs_world, self.menu_cfg, 100, "small_level_counter")
         create_text_interface(self.ecs_world, self.menu_cfg, "play_prompt")
         create_text_interface(self.ecs_world, self.menu_cfg, "copyright")
         create_text_interface(self.ecs_world, self.menu_cfg, "insert_coin")

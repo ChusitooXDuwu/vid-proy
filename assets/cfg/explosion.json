@@ -1,0 +1,15 @@
+{
+    "sound": "assets/snd/enemy_die.ogg",
+    "image": "assets/img/explosion_missiles_01.png",
+    "animations": {
+        "number_frames": 8,
+        "list": [
+            {
+                "name": "EXPLODE",
+                "start": 0,
+                "end": 7,
+                "framerate": 16
+            }
+        ]
+    }
+}
