@@ -248,6 +248,8 @@ def create_ship(
     world.add_component(up_action, CInputCommand("PLAYER_UP", pygame.K_UP))
     down_action = world.create_entity()
     world.add_component(down_action, CInputCommand("PLAYER_DOWN", pygame.K_DOWN))
+    pause_action = world.create_entity()
+    world.add_component(pause_action, CInputCommand("PLAYER_PAUSE", pygame.K_p))
     world.add_component(player_entity, CTagPlayer())
     world.add_component(player_entity, CAnimation(player_cfg["animations"]))
     world.add_component(

@@ -15,6 +15,7 @@ from src.create.prefab_creator import (
 )
 from src.ecs.components.c_input_command import CInputCommand, CommandPhase
 from src.ecs.components.c_rotation import CRotation, RotationEnum
+from src.ecs.components.c_surface import CSurface
 from src.ecs.systems.s_animation import system_animation
 from src.ecs.systems.s_bullet_movement import system_bullet_movement
 from src.ecs.systems.s_cloud_respawner import system_cloud_respawner
@@ -61,6 +62,8 @@ class Level01Scene(Scene):
         self.player_1 = None
         self.intro_level_countdown_time = 4.0
         self.intro_level_elapsed_time = 0.0
+        self._game_paused = False
+        self._pause_text_entity = None
 
     def do_draw(self, screen):
         screen.fill(self._bg_color)
@@ -151,6 +154,13 @@ class Level01Scene(Scene):
         )
 
     def do_action(self, action: CInputCommand):
+        if action.name == "PLAYER_PAUSE" and action.phase == CommandPhase.START:
+            self._game_paused = not self._game_paused
+            return
+
+        if self._game_paused:
+            return
+
         c_rotation = self.ecs_world.component_for_entity(self.player_entity, CRotation)
 
         if action.name == "PLAYER_LEFT":
@@ -221,23 +231,24 @@ class Level01Scene(Scene):
             if self.ecs_world.entity_exists(self.player_1):
                 self.ecs_world.delete_entity(self.player_1)
 
-        system_color_cycle(
-            self.ecs_world,
-            delta_time,
-            self.level_01_intro_cfg,
-            self.level_01_intro_cfg["a_d_1910"],
-        )
-        system_animation(self.ecs_world, delta_time)
-        system_cloud_respawner(self.ecs_world, self.screen_rect)
-        system_movement(self.ecs_world, delta_time, self.player_entity)
-        system_rotation_update(self.ecs_world, delta_time)
-        system_player_state(self.ecs_world)
-        system_bullet_movement(self.ecs_world, delta_time)
-        system_screen_boundary_bullet(self.ecs_world, self.screen_rect)
-        system_collision_bullet_enemy(self.ecs_world, self.explosion_cfg)
-        system_explosion_animation_end(self.ecs_world)
+        if not self._game_paused:
+            system_color_cycle(
+                self.ecs_world,
+                delta_time,
+                self.level_01_intro_cfg,
+                self.level_01_intro_cfg["a_d_1910"],
+            )
+            system_animation(self.ecs_world, delta_time)
+            system_cloud_respawner(self.ecs_world, self.screen_rect)
+            system_movement(self.ecs_world, delta_time, self.player_entity)
+            system_rotation_update(self.ecs_world, delta_time)
+            system_player_state(self.ecs_world)
+            system_bullet_movement(self.ecs_world, delta_time)
+            system_screen_boundary_bullet(self.ecs_world, self.screen_rect)
+            system_collision_bullet_enemy(self.ecs_world, self.explosion_cfg)
+            system_explosion_animation_end(self.ecs_world)
 
-        if not self.can_shoot:
-            self.bullet_timer += delta_time
-            if self.bullet_timer >= self.bullet_cooldown:
-                self.can_shoot = True
+            if not self.can_shoot:
+                self.bullet_timer += delta_time
+                if self.bullet_timer >= self.bullet_cooldown:
+                    self.can_shoot = True

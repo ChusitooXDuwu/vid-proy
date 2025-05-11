@@ -14,6 +14,41 @@
         "player_rotations": 32,
         "rotation_delay": 0.04
     },
+    "font": "assets/fnt/PressStart2P.ttf",
+    "pause_text": {
+        "text": "PAUSED",
+        "size": 48,
+        "color": {
+            "r": 255,
+            "g": 255,
+            "b": 255
+        },
+        "color_cycle": {
+            "colors": [
+                {
+                    "r": 255,
+                    "g": 255,
+                    "b": 255
+                },
+                {
+                    "r": 255,
+                    "g": 0,
+                    "b": 0
+                },
+                {
+                    "r": 0,
+                    "g": 0,
+                    "b": 255
+                }
+            ],
+            "cycle_time": 0.3
+        },
+        "center": true,
+        "pos": {
+            "x": 112,
+            "y": 128
+        }
+    },
     "clouds": {
         "clouds_front": {
             "image": "assets/img/clouds_large.png",
