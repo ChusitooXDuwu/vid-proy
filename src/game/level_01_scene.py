@@ -8,6 +8,7 @@ from src.create.prefab_creator import (
     create_image,
     create_info_bar,
     create_life_icon,
+    create_pause_text,
     create_ship,
     create_text_interface,
     create_text_interface_with_color_cycle,
@@ -67,7 +68,7 @@ class Level01Scene(Scene):
 
     def do_draw(self, screen):
         screen.fill(self._bg_color)
-        return super().do_draw(screen)
+        return super().do_draw(screen, self._game_paused)
 
     def do_create(self):
         create_clouds(
@@ -127,6 +128,10 @@ class Level01Scene(Scene):
             self.ecs_world,
             self.player_cfg,
             pygame.Vector2(base_x + 10, life_pos_y),  # TODO: Use game config
+        )
+
+        self._pause_text_entity = create_pause_text(
+            self.ecs_world, self.level_info, "pause_text"
         )
 
         enemy_counter_base_pos = pygame.Vector2(
@@ -231,13 +236,13 @@ class Level01Scene(Scene):
             if self.ecs_world.entity_exists(self.player_1):
                 self.ecs_world.delete_entity(self.player_1)
 
+        system_color_cycle(
+            self.ecs_world,
+            delta_time,
+            self.level_01_intro_cfg,
+        )
+
         if not self._game_paused:
-            system_color_cycle(
-                self.ecs_world,
-                delta_time,
-                self.level_01_intro_cfg,
-                self.level_01_intro_cfg["a_d_1910"],
-            )
             system_animation(self.ecs_world, delta_time)
             system_cloud_respawner(self.ecs_world, self.screen_rect)
             system_movement(self.ecs_world, delta_time, self.player_entity)

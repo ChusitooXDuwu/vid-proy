@@ -18,6 +18,7 @@ from src.ecs.components.c_velocity import CVelocity
 from src.ecs.components.tags.c_tag_bullet import CTagBullet
 from src.ecs.components.tags.c_tag_cloud import CTagCloud
 from src.ecs.components.tags.c_tag_explosion import CTagExplosion
+from src.ecs.components.tags.c_tag_pause_text import CTagPauseText
 from src.ecs.components.tags.c_tag_player import CTagPlayer
 from src.engine.service_locator import ServiceLocator
 
@@ -135,6 +136,44 @@ def create_text_interface(
     return create_text(
         world, interface_info[interface_type]["text"], font, color, pos, center
     )
+
+
+def create_pause_text(
+    world: esper.World, interface_info: dict, interface_type: str
+) -> int:
+    """
+    Creates a pause text entity in the game world.
+    """
+    font = ServiceLocator.fonts_service.get(
+        interface_info["font"], interface_info[interface_type]["size"]
+    )
+
+    color = pygame.Color(
+        interface_info[interface_type]["color"]["r"],
+        interface_info[interface_type]["color"]["g"],
+        interface_info[interface_type]["color"]["b"],
+    )
+
+    pos = pygame.Vector2(
+        interface_info[interface_type]["pos"]["x"],
+        interface_info[interface_type]["pos"]["y"],
+    )
+
+    center = interface_info[interface_type].get("center", False)
+
+    pause_text_entity = create_text(
+        world, interface_info[interface_type]["text"], font, color, pos, center
+    )
+
+    colors_values = interface_info[interface_type]["color_cycle"]["colors"]
+    colors = [
+        pygame.Color(color["r"], color["g"], color["b"]) for color in colors_values
+    ]
+
+    cycle_time = interface_info[interface_type]["color_cycle"]["cycle_time"]
+    world.add_component(pause_text_entity, CTagPauseText())
+    world.add_component(pause_text_entity, CColorCycle(colors, cycle_time))
+    return pause_text_entity
 
 
 def create_text_interface_with_color_cycle(
@@ -422,9 +461,7 @@ def create_life_icon(
 
     life_entity = world.create_entity()
 
-    scale = (
-        1  # If we want to scale the life icon, we can set this value to something else
-    )
+    scale = 1
 
     scaled_width = int(size.x * scale)
     scaled_height = int(size.y * scale)

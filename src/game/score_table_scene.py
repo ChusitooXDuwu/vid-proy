@@ -50,7 +50,6 @@ class ScoreTableScene(Scene):
         create_text_interface(self.ecs_world, self.score_table_cfg, "2-UP")
         create_text_interface(self.ecs_world, self.score_table_cfg, "credit")
         create_text_interface(self.ecs_world, self.score_table_cfg, "credit_00")
-        
 
     def do_update(self, delta_time: float):
         self.elapsed_time += delta_time
@@ -58,9 +57,6 @@ class ScoreTableScene(Scene):
         if not self.showing_transition and self.elapsed_time >= self.countdown_time:
             self.showing_transition = True
             self.transition_elapsed = 0.0
-            print("Transitioning to level 01 menu scene")
-            print("Creating pixel grid")
-            print("Screen size: ", self._game_engine.screen.get_width(), self._game_engine.screen.get_height())
             create_pixel_grid(
                 self.ecs_world,
                 self._game_engine.screen.get_width(),
