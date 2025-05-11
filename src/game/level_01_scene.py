@@ -89,39 +89,15 @@ class Level01Scene(Scene):
             35,
         )
 
-        self.bullet_timer = 0.0
-        self.bullet_cooldown = 0.0001
+        self.bullet_timer = 0.0  # TODO: Use game config
+        self.bullet_cooldown = 0.0001  # TODO: Use game config
         self.can_shoot = True
-
-        fire_action_z = self.ecs_world.create_entity()
-        self.ecs_world.add_component(
-            fire_action_z, CInputCommand("PLAYER_FIRE", pygame.K_z)
-        )
-
         create_top_info_bar(self.ecs_world, self.screen_rect.width)
 
-        bottom_bar_height = 10
+        bottom_bar_height = 10  # TODO: Use game config
         bottom_bar_pos = pygame.Vector2(0, self.screen_rect.height - bottom_bar_height)
         create_info_bar(
             self.ecs_world, self.screen_rect.width, bottom_bar_height, bottom_bar_pos
-        )
-
-        left_action = self.ecs_world.create_entity()
-        self.ecs_world.add_component(
-            left_action, CInputCommand("PLAYER_LEFT", pygame.K_LEFT)
-        )
-
-        right_action = self.ecs_world.create_entity()
-        self.ecs_world.add_component(
-            right_action, CInputCommand("PLAYER_RIGHT", pygame.K_RIGHT)
-        )
-
-        up_action = self.ecs_world.create_entity()
-        self.ecs_world.add_component(up_action, CInputCommand("PLAYER_UP", pygame.K_UP))
-
-        down_action = self.ecs_world.create_entity()
-        self.ecs_world.add_component(
-            down_action, CInputCommand("PLAYER_DOWN", pygame.K_DOWN)
         )
 
         create_image(
@@ -136,17 +112,23 @@ class Level01Scene(Scene):
         create_text_interface(self.ecs_world, self.level_01_intro_cfg, "1-UP_00")
         create_text_interface(self.ecs_world, self.level_01_intro_cfg, "2-UP")
 
-        base_x = 30
-        life_pos_y = 20
+        base_x = 30  # TODO: Use game config
+        life_pos_y = 20  # TODO: Use game config
 
         create_life_icon(
-            self.ecs_world, self.player_cfg, pygame.Vector2(base_x - 10, life_pos_y)
+            self.ecs_world,
+            self.player_cfg,
+            pygame.Vector2(base_x - 10, life_pos_y),  # TODO: Use game config
         )
         create_life_icon(
-            self.ecs_world, self.player_cfg, pygame.Vector2(base_x + 10, life_pos_y)
+            self.ecs_world,
+            self.player_cfg,
+            pygame.Vector2(base_x + 10, life_pos_y),  # TODO: Use game config
         )
 
-        enemy_counter_base_pos = pygame.Vector2(10, self.screen_rect.height - 10)
+        enemy_counter_base_pos = pygame.Vector2(
+            10, self.screen_rect.height - 10
+        )  # TODO: Use game config
         self.enemy_counters = create_enemy_counter(
             self.ecs_world,
             "assets/img/plane_counter_01.png",

@@ -5,6 +5,7 @@ import math
 from src.ecs.components.c_animation import CAnimation
 from src.ecs.components.c_bullet_type import BulletType, CBulletType
 from src.ecs.components.c_color_cycle import CColorCycle
+from src.ecs.components.c_input_command import CInputCommand
 from src.ecs.components.c_pixel import CPixel
 from src.ecs.components.c_player_state import CPlayerState
 from src.ecs.components.c_render_priority import CRenderPriority
@@ -63,7 +64,7 @@ def create_sprite(
     center: bool = False,
 ) -> int:
     """
-    Creates a sprite entity in the ECS world with the specified position, velocity, 
+    Creates a sprite entity in the ECS world with the specified position, velocity,
     and surface. Optionally centers the sprite's position based on its dimensions.
     Args:
         ecs_world (esper.World): The ECS world where the entity will be created.
@@ -71,7 +72,7 @@ def create_sprite(
         vel (pygame.Vector2): The velocity of the sprite.
         surface (pygame.Surface): The surface representing the sprite's appearance.
         priority: The priority of the sprite.
-        center (bool, optional): If True, adjusts the position to center the sprite 
+        center (bool, optional): If True, adjusts the position to center the sprite
             based on its dimensions. Defaults to False.
     Returns:
         int: The ID of the created sprite entity.
@@ -88,14 +89,12 @@ def create_sprite(
     ecs_world.add_component(sprite_entity, CVelocity(vel))
     ecs_world.add_component(sprite_entity, CSurface.from_surface(surface))
     ecs_world.add_component(sprite_entity, CRenderPriority(priority))
-    
+
     return sprite_entity
 
 
 def create_text_interface(
-    world: esper.World, 
-    interface_info: dict, 
-    interface_type: str
+    world: esper.World, interface_info: dict, interface_type: str
 ) -> int:
     """
     Creates a text interface entity in the game world.
@@ -143,13 +142,13 @@ def create_text_interface_with_color_cycle(
 ) -> int:
     """
     Creates a text interface entity with a color cycling effect.
-    This function creates a text interface entity using the provided world, 
-    interface information, and interface type. It then adds a color cycling 
+    This function creates a text interface entity using the provided world,
+    interface information, and interface type. It then adds a color cycling
     component to the entity, which cycles through a predefined list of colors.
     Args:
-        world (esper.World): The ECS (Entity Component System) world where the 
+        world (esper.World): The ECS (Entity Component System) world where the
             entity will be created.
-        interface_info (dict): A dictionary containing information about the 
+        interface_info (dict): A dictionary containing information about the
             text interface to be created.
         interface_type (str): A string specifying the type of the text interface.
     Returns:
@@ -169,25 +168,22 @@ def create_text_interface_with_color_cycle(
 
 
 def create_image(
-    world: esper.World, 
-    interface_info: dict,
-    priority: int,
-    image_type: str
+    world: esper.World, interface_info: dict, priority: int, image_type: str
 ) -> int:
     """
-    Creates a sprite entity in the given ECS world using the specified image type 
+    Creates a sprite entity in the given ECS world using the specified image type
     and interface information.
 
     Args:
         world (esper.World): The ECS world where the sprite entity will be created.
-        interface_info (dict): A dictionary containing configuration data for the 
+        interface_info (dict): A dictionary containing configuration data for the
             sprite, including position and image details.
             Expected keys:
                 - <interface_type>: A dictionary with the following keys:
                     - "image" (str): The path of the image to be used.
                     - "pos" (dict): A dictionary with "x" and "y" keys for the position.
                     - "center" (bool, optional): Whether to center the text. Defaults to False.
-        image_type (str): The key to access specific image and position data 
+        image_type (str): The key to access specific image and position data
             within the interface_info dictionary.
 
     Returns:
@@ -204,10 +200,7 @@ def create_image(
 
 
 def create_ship(
-    world: esper.World, 
-    player_cfg: dict, 
-    level_info: dict, 
-    player_rotations: int
+    world: esper.World, player_cfg: dict, level_info: dict, player_rotations: int
 ) -> int:
     """
     Creates a player ship entity in the game world with the specified configuration.
@@ -245,6 +238,16 @@ def create_ship(
         )
         for i in range(player_rotations)
     ]
+    fire_action_z = world.create_entity()
+    world.add_component(fire_action_z, CInputCommand("PLAYER_FIRE", pygame.K_z))
+    left_action = world.create_entity()
+    world.add_component(left_action, CInputCommand("PLAYER_LEFT", pygame.K_LEFT))
+    right_action = world.create_entity()
+    world.add_component(right_action, CInputCommand("PLAYER_RIGHT", pygame.K_RIGHT))
+    up_action = world.create_entity()
+    world.add_component(up_action, CInputCommand("PLAYER_UP", pygame.K_UP))
+    down_action = world.create_entity()
+    world.add_component(down_action, CInputCommand("PLAYER_DOWN", pygame.K_DOWN))
     world.add_component(player_entity, CTagPlayer())
     world.add_component(player_entity, CAnimation(player_cfg["animations"]))
     world.add_component(
@@ -264,11 +267,11 @@ def create_logo(world: esper.World, logo_info: dict) -> int:
 
 
 def create_clouds(
-    ecs_world: esper.World, 
+    ecs_world: esper.World,
     cloud_info: dict,
     priority: int,
-    padding_top=30, 
-    padding_bottom=10
+    padding_top=30,
+    padding_bottom=10,
 ) -> int:
     """
     Creates cloud entities in the ECS world based on the provided cloud information.
@@ -355,10 +358,10 @@ def create_pixel_grid(
 
 
 def create_info_bar(
-    world: esper.World, 
-    width: int, 
-    height: int = 40, 
-    pos: pygame.Vector2 = pygame.Vector2(0, 0)
+    world: esper.World,
+    width: int,
+    height: int = 40,
+    pos: pygame.Vector2 = pygame.Vector2(0, 0),
 ) -> int:
     """
     Creates an information bar entity in the given ECS world.
@@ -372,19 +375,20 @@ def create_info_bar(
     """
 
     bar_entity = world.create_entity()
-    color = pygame.Color(0, 0, 0)  
-    
+    color = pygame.Color(0, 0, 0)
+
     surface = pygame.Surface((width, height))
     surface.fill(color)
-    
+
     world.add_component(bar_entity, CTransform(pos))
     world.add_component(bar_entity, CSurface.from_surface(surface))
     world.add_component(bar_entity, CRenderPriority(50))
-    
+
     return bar_entity
 
+
 def create_top_info_bar(world: esper.World, width: int, height: int = 35) -> int:
-    
+
     return create_info_bar(world, width, height, pygame.Vector2(0, 0))
 
 
@@ -413,31 +417,28 @@ def create_life_icon(
     player_sprite = ServiceLocator.images_service.get(player_cfg["image"])
     width, height = player_sprite.get_size()
     size = pygame.Vector2(width / player_cfg["animations"]["number_frames"], height)
-    
+
     life_entity = world.create_entity()
- 
-    scale = 1 # If we want to scale the life icon, we can set this value to something else
+
+    scale = (
+        1  # If we want to scale the life icon, we can set this value to something else
+    )
 
     scaled_width = int(size.x * scale)
     scaled_height = int(size.y * scale)
-    
 
-    frame_rect = pygame.Rect(
-        0, 0, int(size.x), int(size.y)
-    )
-    
+    frame_rect = pygame.Rect(0, 0, int(size.x), int(size.y))
 
     try:
         frame = player_sprite.subsurface(frame_rect)
         scaled_frame = pygame.transform.scale(frame, (scaled_width, scaled_height))
-        
-    
+
         world.add_component(life_entity, CTransform(pos))
         world.add_component(life_entity, CSurface.from_surface(scaled_frame))
         world.add_component(life_entity, CRenderPriority(70))
     except ValueError as e:
         print(f"Error creating life icon: {e}")
-    
+
     return life_entity
 
 
@@ -446,7 +447,7 @@ def create_enemy_counter(
     image_path: str,
     base_pos: pygame.Vector2,
     count: int = 6,
-    spacing: int = 20
+    spacing: int = 20,
 ) -> list[int]:
     """
     Creates a series of enemy counter entities in the game world.
@@ -461,24 +462,21 @@ def create_enemy_counter(
     """
 
     counter_entities = []
-    
-    
+
     counter_sprite = ServiceLocator.images_service.get(image_path)
-    
+
     for i in range(count):
-        
+
         pos = pygame.Vector2(base_pos.x + (i * spacing), base_pos.y)
-        
-       
+
         counter_entity = world.create_entity()
         world.add_component(counter_entity, CTransform(pos))
         world.add_component(counter_entity, CSurface.from_surface(counter_sprite))
-        world.add_component(counter_entity, CRenderPriority(70)) 
-        
-        counter_entities.append(counter_entity)
-    
-    return counter_entities
+        world.add_component(counter_entity, CRenderPriority(70))
 
+        counter_entities.append(counter_entity)
+
+    return counter_entities
 
 
 def create_bullet(
@@ -486,59 +484,51 @@ def create_bullet(
     direction: pygame.Vector2,
     player_entity: int,
     bullet_cfg: dict,
-    bullet_type: int = 1
+    bullet_type: int = 1,
 ) -> int:
-    
+
     c_transform = world.component_for_entity(player_entity, CTransform)
     c_surface = world.component_for_entity(player_entity, CSurface)
-    
-   
+
     c_rotation = world.component_for_entity(player_entity, CRotation)
-    
-    
+
     direction = c_rotation.directions[c_rotation.index]
-    
-    
+
     bullet_width = 1.5
     bullet_height = 1.5
     bullet_img = pygame.Surface((bullet_width, bullet_height))
-    bullet_img.fill(pygame.Color(255, 255, 255))  
-    
-    
+    bullet_img.fill(pygame.Color(255, 255, 255))
+
     player_size = pygame.Vector2(c_surface.area.width, c_surface.area.height)
     player_center_x = c_transform.pos.x + player_size.x / 2
     player_center_y = c_transform.pos.y + player_size.y / 2
-    
-    
+
     pos = pygame.Vector2(
-        player_center_x - bullet_width / 2,
-        player_center_y - bullet_height / 2
+        player_center_x - bullet_width / 2, player_center_y - bullet_height / 2
     )
-    
-    
+
     if direction.length_squared() > 0:
         direction = direction.normalize()
-    
-    
+
     velocity = direction * bullet_cfg["velocity"]
-    
-    
+
     bullet_entity = world.create_entity()
     world.add_component(bullet_entity, CTransform(pos))
     world.add_component(bullet_entity, CVelocity(velocity))
     world.add_component(bullet_entity, CSurface.from_surface(bullet_img))
     world.add_component(bullet_entity, CTagBullet())
     world.add_component(bullet_entity, CRenderPriority(30))
-    
-    
+
     ServiceLocator.sounds_service.play(bullet_cfg["sound"])
-    
+
     return bullet_entity
 
 
-def create_explosion(world: esper.World, pos: pygame.Vector2, explosion_cfg: dict) -> int:
+def create_explosion(
+    world: esper.World, pos: pygame.Vector2, explosion_cfg: dict
+) -> int:
     explosion_surface = ServiceLocator.images_service.get(explosion_cfg["image"])
-    
+
     vel = pygame.Vector2(0, 0)
     explosion_entity = world.create_entity()
     world.add_component(explosion_entity, CTransform(pos))
