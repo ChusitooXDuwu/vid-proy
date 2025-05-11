@@ -1,15 +1,20 @@
 import json
-from numpy import spacing
 import pygame
 import src
-from src.create.prefab_creator import create_clouds, create_enemy_counter, create_image, create_info_bar, create_life_icon, create_ship, create_text_interface, create_text_interface_with_color_cycle
-from src.create.prefab_creator import create_bullet, create_clouds, create_enemy_counter, create_image, create_info_bar, create_life_icon, create_ship, create_text_interface, create_top_info_bar
-from src.ecs.components.c_bullet_type import BulletType
+from src.create.prefab_creator import (
+    create_bullet,
+    create_clouds,
+    create_enemy_counter,
+    create_image,
+    create_info_bar,
+    create_life_icon,
+    create_ship,
+    create_text_interface,
+    create_text_interface_with_color_cycle,
+    create_top_info_bar,
+)
 from src.ecs.components.c_input_command import CInputCommand, CommandPhase
 from src.ecs.components.c_rotation import CRotation, RotationEnum
-from src.ecs.components.c_surface import CSurface
-from src.ecs.components.c_transform import CTransform
-from src.ecs.components.tags.c_tag_player import CTagPlayer
 from src.ecs.systems.s_animation import system_animation
 from src.ecs.systems.s_bullet_movement import system_bullet_movement
 from src.ecs.systems.s_cloud_respawner import system_cloud_respawner
@@ -21,14 +26,13 @@ from src.ecs.systems.s_player_state import system_player_state
 from src.ecs.systems.s_rotation_update import system_rotation_update
 from src.ecs.systems.s_screen_boundary_bullet import system_screen_boundary_bullet
 from src.engine.scenes.scene import Scene
-from src.engine.service_locator import ServiceLocator
 
 
 class Level01Scene(Scene):
     def __init__(self, engine: "src.engine.game_engine.GameEngine") -> None:
         super().__init__(engine)
 
-        with open("assets/cfg/level_01_intro.json") as intro_file:
+        with open("assets/cfg/level_01_intro.json", encoding="utf-8") as intro_file:
             self.level_01_intro_cfg = json.load(intro_file)
         with open("assets/cfg/level_01.json", encoding="utf-8") as file:
             self.level_info = json.load(file)
@@ -42,14 +46,19 @@ class Level01Scene(Scene):
 
         self._player_rotations = self.level_info["player_spawn"]["player_rotations"]
 
-        self._pending_direction = RotationEnum.NONE
         self.player_entity = None
         self._bg_color = pygame.Color(
             self.level_info["bg"]["color"]["r"],
             self.level_info["bg"]["color"]["g"],
             self.level_info["bg"]["color"]["b"],
         )
-        
+        self.bullet_timer = None
+        self.bullet_cooldown = None
+        self.can_shoot = None
+        self.enemy_counters = None
+        self.a_d_1910 = None
+        self.stage_1 = None
+        self.player_1 = None
         self.intro_level_countdown_time = 4.0
         self.intro_level_elapsed_time = 0.0
 
@@ -80,13 +89,10 @@ class Level01Scene(Scene):
             35,
         )
 
-   
-        
         self.bullet_timer = 0.0
-        self.bullet_cooldown = 0.0001  
+        self.bullet_cooldown = 0.0001
         self.can_shoot = True
-        
-        
+
         fire_action_z = self.ecs_world.create_entity()
         self.ecs_world.add_component(
             fire_action_z, CInputCommand("PLAYER_FIRE", pygame.K_z)
@@ -94,10 +100,11 @@ class Level01Scene(Scene):
 
         create_top_info_bar(self.ecs_world, self.screen_rect.width)
 
-        
         bottom_bar_height = 10
         bottom_bar_pos = pygame.Vector2(0, self.screen_rect.height - bottom_bar_height)
-        create_info_bar(self.ecs_world, self.screen_rect.width, bottom_bar_height, bottom_bar_pos)
+        create_info_bar(
+            self.ecs_world, self.screen_rect.width, bottom_bar_height, bottom_bar_pos
+        )
 
         left_action = self.ecs_world.create_entity()
         self.ecs_world.add_component(
@@ -108,12 +115,19 @@ class Level01Scene(Scene):
         self.ecs_world.add_component(
             right_action, CInputCommand("PLAYER_RIGHT", pygame.K_RIGHT)
         )
-        
+
+        up_action = self.ecs_world.create_entity()
+        self.ecs_world.add_component(up_action, CInputCommand("PLAYER_UP", pygame.K_UP))
+
+        down_action = self.ecs_world.create_entity()
+        self.ecs_world.add_component(
+            down_action, CInputCommand("PLAYER_DOWN", pygame.K_DOWN)
+        )
+
         create_image(
             self.ecs_world, self.level_01_intro_cfg, 100, "small_level_counter"
         )
 
-     
         create_text_interface(self.ecs_world, self.level_01_intro_cfg, "high_score")
         create_text_interface(
             self.ecs_world, self.level_01_intro_cfg, "high_score_10000"
@@ -122,21 +136,15 @@ class Level01Scene(Scene):
         create_text_interface(self.ecs_world, self.level_01_intro_cfg, "1-UP_00")
         create_text_interface(self.ecs_world, self.level_01_intro_cfg, "2-UP")
 
-       
-        base_x = 30  
-        life_pos_y = 20  
-        
-        create_life_icon(
-            self.ecs_world,
-            self.player_cfg,
-            pygame.Vector2(base_x - 10, life_pos_y)
-        )
-        create_life_icon(
-            self.ecs_world,
-            self.player_cfg,
-            pygame.Vector2(base_x + 10, life_pos_y)
-        )
+        base_x = 30
+        life_pos_y = 20
 
+        create_life_icon(
+            self.ecs_world, self.player_cfg, pygame.Vector2(base_x - 10, life_pos_y)
+        )
+        create_life_icon(
+            self.ecs_world, self.player_cfg, pygame.Vector2(base_x + 10, life_pos_y)
+        )
 
         enemy_counter_base_pos = pygame.Vector2(10, self.screen_rect.height - 10)
         self.enemy_counters = create_enemy_counter(
@@ -144,50 +152,82 @@ class Level01Scene(Scene):
             "assets/img/plane_counter_01.png",
             enemy_counter_base_pos,
             count=6,
-            spacing=20
+            spacing=20,
         )
-       
+
         create_text_interface(self.ecs_world, self.level_01_intro_cfg, "credit")
         create_text_interface(self.ecs_world, self.level_01_intro_cfg, "credit_00")
-        
-        self.a_d_1910 = create_text_interface_with_color_cycle(self.ecs_world, self.level_01_intro_cfg, 'a_d_1910')
-        self.stage_1 = create_text_interface(self.ecs_world, self.level_01_intro_cfg, "stage_1")
-        self.player_1 = create_text_interface(self.ecs_world, self.level_01_intro_cfg, "player_1")
 
+        self.a_d_1910 = create_text_interface_with_color_cycle(
+            self.ecs_world, self.level_01_intro_cfg, "a_d_1910"
+        )
+        self.stage_1 = create_text_interface(
+            self.ecs_world, self.level_01_intro_cfg, "stage_1"
+        )
+        self.player_1 = create_text_interface(
+            self.ecs_world, self.level_01_intro_cfg, "player_1"
+        )
 
     def do_action(self, action: CInputCommand):
-        
-        if action.name == 'PLAYER_LEFT':
+        c_rotation = self.ecs_world.component_for_entity(self.player_entity, CRotation)
+
+        if action.name == "PLAYER_LEFT":
             if action.phase == CommandPhase.START:
-                self._pending_direction = RotationEnum.LEFT
-            elif action.phase == CommandPhase.END and self._pending_direction == RotationEnum.LEFT:
-                self._pending_direction = RotationEnum.NONE
-                
-        elif action.name == 'PLAYER_RIGHT':
+                c_rotation.current_horizontal = RotationEnum.LEFT
+            elif (
+                action.phase == CommandPhase.END
+                and c_rotation.current_horizontal == RotationEnum.LEFT
+            ):
+                c_rotation.current_horizontal = RotationEnum.NONE
+
+        elif action.name == "PLAYER_RIGHT":
             if action.phase == CommandPhase.START:
-                self._pending_direction = RotationEnum.RIGHT
-            elif action.phase == CommandPhase.END and self._pending_direction == RotationEnum.RIGHT:
-                self._pending_direction = RotationEnum.NONE
-                
-        elif action.name == 'PLAYER_FIRE':
+                c_rotation.current_horizontal = RotationEnum.RIGHT
+            elif (
+                action.phase == CommandPhase.END
+                and c_rotation.current_horizontal == RotationEnum.RIGHT
+            ):
+                c_rotation.current_horizontal = RotationEnum.NONE
+
+        elif action.name == "PLAYER_UP":
             if action.phase == CommandPhase.START:
-                if self.can_shoot and self.intro_level_elapsed_time >= self.intro_level_countdown_time:
-                    c_rotation = self.ecs_world.component_for_entity(self.player_entity, CRotation)
-                    direction = c_rotation.directions[c_rotation.index]
-                    
-                    create_bullet(
-                        self.ecs_world,        
-                        direction,              
-                        self.player_entity,     
-                        self.bullet_cfg,        
-                        1                       
+                c_rotation.current_vertical = RotationEnum.UP
+            elif (
+                action.phase == CommandPhase.END
+                and c_rotation.current_vertical == RotationEnum.UP
+            ):
+                c_rotation.current_vertical = RotationEnum.NONE
+
+        elif action.name == "PLAYER_DOWN":
+            if action.phase == CommandPhase.START:
+                c_rotation.current_vertical = RotationEnum.DOWN
+            elif (
+                action.phase == CommandPhase.END
+                and c_rotation.current_vertical == RotationEnum.DOWN
+            ):
+                c_rotation.current_vertical = RotationEnum.NONE
+
+        elif action.name == "PLAYER_FIRE":
+            if action.phase == CommandPhase.START:
+                if (
+                    self.can_shoot
+                    and self.intro_level_elapsed_time >= self.intro_level_countdown_time
+                ):
+                    c_rotation = self.ecs_world.component_for_entity(
+                        self.player_entity, CRotation
                     )
-                    
+                    direction = c_rotation.directions[c_rotation.index]
+
+                    create_bullet(
+                        self.ecs_world,
+                        direction,
+                        self.player_entity,
+                        self.bullet_cfg,
+                        1,
+                    )
+
                     self.can_shoot = False
                     self.bullet_timer = 0.0
-            
-            
-            
 
     def do_update(self, delta_time: float):
         self.intro_level_elapsed_time += delta_time
@@ -199,11 +239,16 @@ class Level01Scene(Scene):
             if self.ecs_world.entity_exists(self.player_1):
                 self.ecs_world.delete_entity(self.player_1)
 
-        system_color_cycle(self.ecs_world, delta_time, self.level_01_intro_cfg, self.level_01_intro_cfg["a_d_1910"])
+        system_color_cycle(
+            self.ecs_world,
+            delta_time,
+            self.level_01_intro_cfg,
+            self.level_01_intro_cfg["a_d_1910"],
+        )
         system_animation(self.ecs_world, delta_time)
         system_cloud_respawner(self.ecs_world, self.screen_rect)
         system_movement(self.ecs_world, delta_time, self.player_entity)
-        system_rotation_update(self.ecs_world, delta_time, self._pending_direction)
+        system_rotation_update(self.ecs_world, delta_time)
         system_player_state(self.ecs_world)
         system_bullet_movement(self.ecs_world, delta_time)
         system_screen_boundary_bullet(self.ecs_world, self.screen_rect)
