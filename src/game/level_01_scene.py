@@ -269,30 +269,19 @@ class Level01Scene(Scene):
             system_bullet_movement(self.ecs_world, delta_time)
             system_screen_boundary_bullet(self.ecs_world, self.screen_rect)
             system_bullet_enemy_collision(self.ecs_world, self.explosion_cfg['enemy'])
-            system_explosion_animation_end(self.ecs_world)
+
+            if self.intro_level_elapsed_time >= self.intro_level_countdown_time:
+                system_enemy_movement_no_rebound(self.ecs_world, self.screen_rect, self.enemies_cfg, self.total_spawned, delta_time)
+
+            system_remove_explosion_animation(self.ecs_world)
 
             if not self.can_shoot:
                 self.bullet_timer += delta_time
                 if self.bullet_timer >= self.bullet_cooldown:
                     self.can_shoot = True
 
-        system_color_cycle(self.ecs_world, delta_time, self.level_01_intro_cfg, self.level_01_intro_cfg["a_d_1910"])
-        system_animation(self.ecs_world, delta_time)
-        system_cloud_respawner(self.ecs_world, self.screen_rect)
-        system_movement(self.ecs_world, delta_time, self.player_entity)
-        system_rotation_update(self.ecs_world, delta_time, self._pending_direction)
-        system_player_state(self.ecs_world)
-        system_bullet_movement(self.ecs_world, delta_time)
-        system_screen_boundary_bullet(self.ecs_world, self.screen_rect)
-        system_bullet_enemy_collision(self.ecs_world, self.explosion_cfg['enemy'])
-
         if not self.can_shoot:
             self.bullet_timer += delta_time
             if self.bullet_timer >= self.bullet_cooldown:
                 self.can_shoot = True
-
-        if self.intro_level_elapsed_time >= self.intro_level_countdown_time:
-            system_enemy_movement_no_rebound(self.ecs_world, self.screen_rect, self.enemies_cfg, self.total_spawned, delta_time)
-
-        system_remove_explosion_animation(self.ecs_world)
 
