@@ -14,17 +14,27 @@ from src.create.prefab_creator import (
     create_text_interface_with_color_cycle,
     create_top_info_bar,
 )
+import random
+from numpy import spacing
+import pygame
+import src
+from src.create.prefab_creator import create_clouds, create_enemy, create_enemy_counter, create_image, create_info_bar, create_life_icon, create_ship, create_text_interface, create_text_interface_with_color_cycle, spawn_enemy_random
+from src.create.prefab_creator import create_bullet, create_clouds, create_enemy_counter, create_image, create_info_bar, create_life_icon, create_ship, create_text_interface, create_top_info_bar
+from src.ecs.components.c_bullet_type import BulletType
 from src.ecs.components.c_input_command import CInputCommand, CommandPhase
 from src.ecs.components.c_rotation import CRotation, RotationEnum
 from src.ecs.components.c_surface import CSurface
 from src.ecs.systems.s_animation import system_animation
 from src.ecs.systems.s_bullet_movement import system_bullet_movement
 from src.ecs.systems.s_cloud_respawner import system_cloud_respawner
-from src.ecs.systems.s_collision_bullet_enemy import system_collision_bullet_enemy
+from src.ecs.systems.s_collision_bullet_enemy import system_bullet_enemy_collision
 from src.ecs.systems.s_color_cycle import system_color_cycle
+from src.ecs.systems.s_enemy_movement_no_rebound import system_enemy_movement_no_rebound
+from src.ecs.systems.s_enemy_steering import system_enemy_steering
 from src.ecs.systems.s_explosion_animation_end import system_explosion_animation_end
 from src.ecs.systems.s_movement import system_movement
 from src.ecs.systems.s_player_state import system_player_state
+from src.ecs.systems.s_remove_explosion_animation import system_remove_explosion_animation
 from src.ecs.systems.s_rotation_update import system_rotation_update
 from src.ecs.systems.s_screen_boundary_bullet import system_screen_boundary_bullet
 from src.engine.scenes.scene import Scene
@@ -40,7 +50,8 @@ class Level01Scene(Scene):
             self.level_info = json.load(file)
         with open("assets/cfg/player.json", encoding="utf-8") as file:
             self.player_cfg = json.load(file)
-
+        with open("assets/cfg/enemies.json", encoding="utf-8") as file:
+            self.enemies_cfg = json.load(file)
         with open("assets/cfg/explosion.json", encoding="utf-8") as file:
             self.explosion_cfg = json.load(file)
         with open("assets/cfg/bullet.json", encoding="utf-8") as file:
@@ -61,10 +72,17 @@ class Level01Scene(Scene):
         self.a_d_1910 = None
         self.stage_1 = None
         self.player_1 = None
+
         self.intro_level_countdown_time = 4.0
         self.intro_level_elapsed_time = 0.0
         self._game_paused = False
         self._pause_text_entity = None
+
+        self.total_enemigos = 40
+        self.enemigos_creados = 0
+        self.enemigos_activos = []
+
+        self.total_spawned = 0
 
     def do_draw(self, screen):
         screen.fill(self._bg_color)
@@ -250,10 +268,31 @@ class Level01Scene(Scene):
             system_player_state(self.ecs_world)
             system_bullet_movement(self.ecs_world, delta_time)
             system_screen_boundary_bullet(self.ecs_world, self.screen_rect)
-            system_collision_bullet_enemy(self.ecs_world, self.explosion_cfg)
+            system_bullet_enemy_collision(self.ecs_world, self.explosion_cfg['enemy'])
             system_explosion_animation_end(self.ecs_world)
 
             if not self.can_shoot:
                 self.bullet_timer += delta_time
                 if self.bullet_timer >= self.bullet_cooldown:
                     self.can_shoot = True
+
+        system_color_cycle(self.ecs_world, delta_time, self.level_01_intro_cfg, self.level_01_intro_cfg["a_d_1910"])
+        system_animation(self.ecs_world, delta_time)
+        system_cloud_respawner(self.ecs_world, self.screen_rect)
+        system_movement(self.ecs_world, delta_time, self.player_entity)
+        system_rotation_update(self.ecs_world, delta_time, self._pending_direction)
+        system_player_state(self.ecs_world)
+        system_bullet_movement(self.ecs_world, delta_time)
+        system_screen_boundary_bullet(self.ecs_world, self.screen_rect)
+        system_bullet_enemy_collision(self.ecs_world, self.explosion_cfg['enemy'])
+
+        if not self.can_shoot:
+            self.bullet_timer += delta_time
+            if self.bullet_timer >= self.bullet_cooldown:
+                self.can_shoot = True
+
+        if self.intro_level_elapsed_time >= self.intro_level_countdown_time:
+            system_enemy_movement_no_rebound(self.ecs_world, self.screen_rect, self.enemies_cfg, self.total_spawned, delta_time)
+
+        system_remove_explosion_animation(self.ecs_world)
+

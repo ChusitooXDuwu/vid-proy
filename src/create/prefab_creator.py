@@ -1,3 +1,4 @@
+import random
 import pygame
 import esper
 import math
@@ -6,6 +7,7 @@ from src.ecs.components.c_animation import CAnimation
 from src.ecs.components.c_bullet_type import BulletType, CBulletType
 from src.ecs.components.c_color_cycle import CColorCycle
 from src.ecs.components.c_input_command import CInputCommand
+from src.ecs.components.c_path_change import CPathChange
 from src.ecs.components.c_pixel import CPixel
 from src.ecs.components.c_player_state import CPlayerState
 from src.ecs.components.c_render_priority import CRenderPriority
@@ -17,6 +19,7 @@ from src.ecs.components.c_transform import CTransform
 from src.ecs.components.c_velocity import CVelocity
 from src.ecs.components.tags.c_tag_bullet import CTagBullet
 from src.ecs.components.tags.c_tag_cloud import CTagCloud
+from src.ecs.components.tags.c_tag_enemy import CTagEnemy
 from src.ecs.components.tags.c_tag_explosion import CTagExplosion
 from src.ecs.components.tags.c_tag_pause_text import CTagPauseText
 from src.ecs.components.tags.c_tag_player import CTagPlayer
@@ -577,4 +580,68 @@ def create_explosion(
     world.add_component(explosion_entity, CTagExplosion())
 
     ServiceLocator.sounds_service.play(explosion_cfg["sound"])
+    return explosion_entity
+
+def create_enemy(world: esper.World, pos: pygame.Vector2, enemies_info: dict):
+    enemy_entity = world.create_entity()
+
+    sprite_sheet = pygame.image.load(enemies_info['image']).convert_alpha()
+
+    surface = CSurface.from_surface(sprite_sheet)
+    surface.area = pygame.Rect(0, 0, 16, 16)
+    world.add_component(enemy_entity, surface)
+    world.add_component(enemy_entity, CTransform(pos))
+    world.add_component(enemy_entity, CVelocity(pygame.Vector2(0, 0)))
+    world.add_component(enemy_entity, CTagEnemy())
+    world.add_component(enemy_entity, CAnimation(enemies_info['animations']))
+    world.add_component(enemy_entity, CPathChange())
+
+    return enemy_entity
+
+def spawn_enemy_random(world: esper.World, screen_rect: pygame.Rect, enemies_info: dict):
+    side = random.choice(['top', 'bottom', 'left', 'right'])
+
+    if side == 'top':
+        x = random.uniform(0, screen_rect.width)
+        y = 0 - 16  # Un poco fuera de pantalla
+    elif side == 'bottom':
+        x = random.uniform(0, screen_rect.width)
+        y = screen_rect.height + 16
+    elif side == 'left':
+        x = 0 - 16
+        y = random.uniform(0, screen_rect.height)
+    elif side == 'right':
+        x = screen_rect.width + 16
+        y = random.uniform(0, screen_rect.height)
+
+    pos = pygame.Vector2(x, y)
+
+    center = pygame.Vector2(screen_rect.center)
+    speed = random.uniform(30, 50)
+    direction = (center - pos).normalize() * speed
+
+    enemy_entity = create_enemy(world, pos, enemies_info)
+    world.component_for_entity(enemy_entity, CVelocity).velocity = direction
+
+def create_explosion_sprite(world: esper.World, pos: pygame.Vector2, explosion: dict) -> int:
+    full_surface = ServiceLocator.images_service.get(explosion['image']).convert_alpha()
+    number_frames = explosion["animations"]["number_frames"]
+    frame_width = full_surface.get_width() // number_frames
+    frame_height = full_surface.get_height()
+
+    centered_pos = pygame.Vector2(
+        pos.x - frame_width // 2,
+        pos.y - frame_height // 2
+    )
+
+    vel = pygame.Vector2(0, 0)
+    explosion_entity = create_sprite(world, centered_pos, vel, full_surface, 100)
+
+    c_surface = world.component_for_entity(explosion_entity, CSurface)
+    c_surface.area = pygame.Rect(0, 0, frame_width, frame_height)
+
+    world.add_component(explosion_entity, CAnimation(explosion["animations"]))
+    world.add_component(explosion_entity, CTagExplosion())
+
+    ServiceLocator.sounds_service.play(explosion["sound"])
     return explosion_entity
