@@ -1,0 +1,14 @@
+{
+    "image": "assets/img/enemy_01.png",
+    "animations": {
+        "number_frames": 16,
+        "list": [
+            {
+                "name": "directional",
+                "start": 0,
+                "end": 15,
+                "framerate": 1
+            }
+        ]
+    }
+}
