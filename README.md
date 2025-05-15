@@ -9,6 +9,28 @@
 | Sofia Velasquez Marin | s.velasquezm2 |
 | Julian Padilla Molina | j.padilla |
 
+## Rubrica
+
+| Dimensión | Puntos | ¿Realizado? | Responsable |
+|-----------|--------|-------------|-------------|
+| URL del proyecto finalizado con ejecutable compilado, ya sea para web o para descarga en un portal web (itch.io, GameJolt o Newgrounds) | 6 | ❌ |  |
+| Pantalla de menú principal con instrucciones y logo | 1 | ✅ | Sofia Velasquez |
+| Se dibuja el fondo de nubes y se ve el movimiento como en el juego original | 1 | ✅ | Nicolas Carvajal |
+| Movimiento de la nave del jugador | 1 | ✅ | Nicolas Carvajal |
+| Disparo de la nave del jugador | 1 | ✅  | Wyo Hann Chu |
+| Spawn de enemigos y movimiento de persecución | 1 | ✅ | Julian Padilla |
+| Disparo de balas por parte de los enemigos ocasionalmente en su movimiento básico | 1 | ❌ |  |
+| Colisión de balas del jugador con los enemigos | 0.5 | ✅ | Julian Padilla |
+| Colisión de balas enemigas con el jugador | 0.5 | ❌ |  |
+| Posibilidad de pausar el juego. Los enemigos, jugador y proyectiles deben volverse invisibles al pausar el juego. Se debe mostrar un texto de **PAUSED** o similar parpadeando | 1 | ✅ / ❌ | Nicolas Carvajal |
+| Texto (**PLAYER 1** y **FECHA** del nivel) y sonido de introducción al comenzar el primer nivel | 1 | ✅ / ❌ | Julian Padilla |
+| Despliegue del texto de puntaje en la parte superior con su texto **1-UP:** | 1 | ✅ | Sofia Velasquez |
+| Un contador enemigos eliminados en la parte inferior derecha | 1 | ✅ | Sofia Velasquez / Wyo Hann Chu |
+| Introducción de "jefe final" al eliminar 40 enemigos. Al eliminar el enemigo final se declara victoria en el juego. | 1 | ❌ |  |
+| Un mensaje/escena de **GAME OVER** y reinicio del juego cuando el personaje muera por una bala (si implementa vidas, que tengas las vidas en cuenta) | 1 | ❌ |  |
+| Sonidos implementados y animación de imágenes como en el juego original | 1 | ✅ / ❌ |  |
+
+
 
 
 ## Enunciado
