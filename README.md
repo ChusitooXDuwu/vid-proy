@@ -30,8 +30,24 @@
 | Un mensaje/escena de **GAME OVER** y reinicio del juego cuando el personaje muera por una bala (si implementa vidas, que tengas las vidas en cuenta) | 1 | ❌ |  |
 | Sonidos implementados y animación de imágenes como en el juego original | 1 | ✅ / ❌ |  |
 
+### Bonos
 
-
+| Dimensión | ¿Realizado? |
+|-----------|-----------|
+| Ataque de enemigos en escuadrón de manera dinámica | ❌ |
+| Sistema de contador de enemigos con imágenes en vez de números | ✅ |
+| Sistema de vidas (cuatro vidas y game over) | ❌ |
+| Sistema de puntaje máximo y HIGH-SCORE, que se conserva en una sesión de juego | ❌ |
+| Pantalla de HIGH SCORE al terminar el juego con posibilidad de escribir el nombre | ❌ |
+| Varios niveles con diferentes colores de fondo y sprites enemigos | ❌ |
+| Objetos de bono (paracaídas y sub-jefe nivel dos, tres o cuatro) | ❌ |
+| Vistas de depurado para evaluar elementos pertinentes del juego | ❌ |
+| Sistema de edición de niveles (crear enemigos nuevos, desplazar y eliminar enemigos existentes, y guardar el nivel) | ❌ |
+| Arma adicional del jugador con un comportamiento especial | ❌ |
+| Efecto visual adicional extra sobre el juego | ❌ |
+| Modo "atracción" | ❌ |
+| Juego a dos jugadores | ❌ |
+| Implementar inputs de gamepad | ❌ |
 
 ## Enunciado
 
