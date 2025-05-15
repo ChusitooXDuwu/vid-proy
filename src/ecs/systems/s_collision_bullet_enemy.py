@@ -6,6 +6,8 @@ from src.ecs.components.c_surface import CSurface
 from src.ecs.components.c_transform import CTransform
 from src.ecs.components.tags.c_tag_bullet import CTagBullet
 from src.ecs.components.tags.c_tag_enemy import CTagEnemy
+from src.ecs.components.tags.c_tag_player_points import CPlayerPoints
+from src.engine.service_locator import ServiceLocator
 
 
 def system_bullet_enemy_collision(world: esper.World, explosion: dict):
@@ -17,7 +19,7 @@ def system_bullet_enemy_collision(world: esper.World, explosion: dict):
     for bullet_entity, (b_t, b_s, _) in bullets:
         bullet_rect = pygame.Rect(b_t.pos.x, b_t.pos.y, b_s.area.width, b_s.area.height)
 
-        for enemy_entity, (e_t, e_s, _) in enemies:
+        for enemy_entity, (e_t, e_s, enemy_tag) in enemies:
             enemy_rect = pygame.Rect(e_t.pos.x, e_t.pos.y, e_s.area.width, e_s.area.height)
 
             if bullet_rect.colliderect(enemy_rect):
@@ -25,7 +27,21 @@ def system_bullet_enemy_collision(world: esper.World, explosion: dict):
                 world.delete_entity(enemy_entity)
                 create_explosion_sprite(world, b_t.pos, explosion)
                 enemies_killed += 1
+                
+                player_points = world.get_components(CPlayerPoints, CSurface)
+                for _, (c_player_points, c_surface) in player_points:
+                    print(c_player_points.points)
+                    font = ServiceLocator.fonts_service.get('assets/fnt/PressStart2P.ttf', 8)
+                    c_player_points.points += enemy_tag.points
+                    text = str(c_player_points.points)
+                    c_surface.surf = font.render(text, True, (255, 255, 255))
+                    c_surface.area = c_surface.surf.get_rect()            
                 break
+    
+    
+    
+    
+        
                 
     
     return enemies_killed

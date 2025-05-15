@@ -23,6 +23,7 @@ from src.ecs.components.tags.c_tag_enemy import CTagEnemy
 from src.ecs.components.tags.c_tag_explosion import CTagExplosion
 from src.ecs.components.tags.c_tag_pause_text import CTagPauseText
 from src.ecs.components.tags.c_tag_player import CTagPlayer
+from src.ecs.components.tags.c_tag_player_points import CPlayerPoints
 from src.engine.service_locator import ServiceLocator
 
 
@@ -139,6 +140,34 @@ def create_text_interface(
     return create_text(
         world, interface_info[interface_type]["text"], font, color, pos, center
     )
+    
+def create_text_interface_player_points(
+    world: esper.World, interface_info: dict, interface_type: str
+) -> int:
+    font = ServiceLocator.fonts_service.get(
+        interface_info["font"], interface_info[interface_type]["size"]
+    )
+     
+    color = pygame.Color(
+        interface_info[interface_type]["color"]["r"],
+        interface_info[interface_type]["color"]["g"],
+        interface_info[interface_type]["color"]["b"],
+    )
+
+    pos = pygame.Vector2(
+        interface_info[interface_type]["pos"]["x"],
+        interface_info[interface_type]["pos"]["y"],
+    )
+    
+    center = interface_info[interface_type].get("center", False)
+    
+    text = create_text(
+        world, interface_info[interface_type]["text"], font, color, pos, center
+    )
+    
+    world.add_component(text, CPlayerPoints())
+    
+    return text
 
 
 def create_pause_text(
@@ -634,7 +663,7 @@ def create_enemy(world: esper.World, pos: pygame.Vector2, enemies_info: dict):
     world.add_component(enemy_entity, surface)
     world.add_component(enemy_entity, CTransform(pos))
     world.add_component(enemy_entity, CVelocity(pygame.Vector2(0, 0)))
-    world.add_component(enemy_entity, CTagEnemy())
+    world.add_component(enemy_entity, CTagEnemy(enemies_info['points']))
     world.add_component(enemy_entity, CAnimation(enemies_info['animations']))
     world.add_component(enemy_entity, CPathChange())
 
@@ -677,7 +706,7 @@ def create_explosion_sprite(world: esper.World, pos: pygame.Vector2, explosion: 
     )
 
     vel = pygame.Vector2(0, 0)
-    explosion_entity = create_sprite(world, centered_pos, vel, full_surface, 100)
+    explosion_entity = create_sprite(world, centered_pos, vel, full_surface, 80)
 
     c_surface = world.component_for_entity(explosion_entity, CSurface)
     c_surface.area = pygame.Rect(0, 0, frame_width, frame_height)

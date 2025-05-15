@@ -10,7 +10,9 @@ from src.create.prefab_creator import (
     create_life_icon,
     create_pause_text,
     create_ship,
+    create_text,
     create_text_interface,
+    create_text_interface_player_points,
     create_text_interface_with_color_cycle,
     create_top_info_bar,
     create_enemy_progress_bar
@@ -23,6 +25,7 @@ from src.ecs.components.c_bullet_type import BulletType
 from src.ecs.components.c_input_command import CInputCommand, CommandPhase
 from src.ecs.components.c_rotation import CRotation, RotationEnum
 from src.ecs.components.c_surface import CSurface
+from src.ecs.components.tags.c_tag_player_points import CPlayerPoints
 from src.ecs.systems.s_animation import system_animation
 from src.ecs.systems.s_bullet_movement import system_bullet_movement
 from src.ecs.systems.s_cloud_respawner import system_cloud_respawner
@@ -84,6 +87,8 @@ class Level01Scene(Scene):
 
         self.total_spawned = 0
         
+        self.player_points = 0
+        
         
 
     def do_draw(self, screen):
@@ -133,7 +138,8 @@ class Level01Scene(Scene):
             self.ecs_world, self.level_01_intro_cfg, "high_score_10000"
         )
         create_text_interface(self.ecs_world, self.level_01_intro_cfg, "1-UP")
-        create_text_interface(self.ecs_world, self.level_01_intro_cfg, "1-UP_00")
+        self.player_points_text = create_text_interface_player_points(self.ecs_world, self.level_01_intro_cfg, "1-UP_00")
+        
         create_text_interface(self.ecs_world, self.level_01_intro_cfg, "2-UP")
 
         base_x = 30  # TODO: Use game config

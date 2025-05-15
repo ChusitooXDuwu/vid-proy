@@ -1,5 +1,6 @@
 {
     "image": "assets/img/enemy_01.png",
+    "points": 100,
     "animations": {
         "number_frames": 16,
         "list": [
