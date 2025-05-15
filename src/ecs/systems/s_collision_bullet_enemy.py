@@ -30,7 +30,6 @@ def system_bullet_enemy_collision(world: esper.World, explosion: dict):
                 
                 player_points = world.get_components(CPlayerPoints, CSurface)
                 for _, (c_player_points, c_surface) in player_points:
-                    print(c_player_points.points)
                     font = ServiceLocator.fonts_service.get('assets/fnt/PressStart2P.ttf', 8)
                     c_player_points.points += enemy_tag.points
                     text = str(c_player_points.points)
