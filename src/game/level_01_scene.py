@@ -13,9 +13,8 @@ from src.create.prefab_creator import (
     create_text_interface,
     create_text_interface_with_color_cycle,
     create_top_info_bar,
+    create_enemy_progress_bar
 )
-import random
-from numpy import spacing
 import pygame
 import src
 from src.create.prefab_creator import create_clouds, create_enemy, create_enemy_counter, create_image, create_info_bar, create_life_icon, create_ship, create_text_interface, create_text_interface_with_color_cycle, spawn_enemy_random
@@ -78,11 +77,14 @@ class Level01Scene(Scene):
         self._game_paused = False
         self._pause_text_entity = None
 
-        self.total_enemigos = 40
+        self.enemies_killed = 0
+        self.enemies_total = 40
         self.enemigos_creados = 0
         self.enemigos_activos = []
 
         self.total_spawned = 0
+        
+        
 
     def do_draw(self, screen):
         screen.fill(self._bg_color)
@@ -152,17 +154,19 @@ class Level01Scene(Scene):
             self.ecs_world, self.level_info, "pause_text"
         )
 
-        enemy_counter_base_pos = pygame.Vector2(
+        self.enemy_counter_base_pos = pygame.Vector2(
             10, self.screen_rect.height - 10
         )  # TODO: Use game config
+        self.enemy_icon_count = 6
+        self.enemy_icon_spacing = 20
         self.enemy_counters = create_enemy_counter(
             self.ecs_world,
             "assets/img/plane_counter_01.png",
-            enemy_counter_base_pos,
-            count=6,
-            spacing=20,
+            self.enemy_counter_base_pos,
+            count=self.enemy_icon_count,
+            spacing=self.enemy_icon_spacing,
         )
-
+        
         create_text_interface(self.ecs_world, self.level_01_intro_cfg, "credit")
         create_text_interface(self.ecs_world, self.level_01_intro_cfg, "credit_00")
 
@@ -268,7 +272,24 @@ class Level01Scene(Scene):
             system_player_state(self.ecs_world)
             system_bullet_movement(self.ecs_world, delta_time)
             system_screen_boundary_bullet(self.ecs_world, self.screen_rect)
-            system_bullet_enemy_collision(self.ecs_world, self.explosion_cfg['enemy'])
+            
+            self.enemies_killed += system_bullet_enemy_collision(self.ecs_world, self.explosion_cfg['enemy'])
+            
+            # actualizar el contador de enemigos
+            if hasattr(self, "enemy_progress_bar") and self.enemy_progress_bar is not None:
+                if self.ecs_world.entity_exists(self.enemy_progress_bar):
+                    self.ecs_world.delete_entity(self.enemy_progress_bar)
+            self.enemy_progress_bar = create_enemy_progress_bar(
+                self.ecs_world,
+                self.enemy_counter_base_pos,
+                self.enemy_icon_count,
+                self.enemy_icon_spacing,
+                self.enemies_killed,
+                self.enemies_total,
+                8,
+                100
+            )
+            
 
             if self.intro_level_elapsed_time >= self.intro_level_countdown_time:
                 system_enemy_movement_no_rebound(self.ecs_world, self.screen_rect, self.enemies_cfg, self.total_spawned, delta_time)

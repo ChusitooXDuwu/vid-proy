@@ -11,6 +11,8 @@ from src.ecs.components.tags.c_tag_enemy import CTagEnemy
 def system_bullet_enemy_collision(world: esper.World, explosion: dict):
     bullets = world.get_components(CTransform, CSurface, CTagBullet)
     enemies = world.get_components(CTransform, CSurface, CTagEnemy)
+    
+    enemies_killed = 0
 
     for bullet_entity, (b_t, b_s, _) in bullets:
         bullet_rect = pygame.Rect(b_t.pos.x, b_t.pos.y, b_s.area.width, b_s.area.height)
@@ -22,4 +24,8 @@ def system_bullet_enemy_collision(world: esper.World, explosion: dict):
                 world.delete_entity(bullet_entity)
                 world.delete_entity(enemy_entity)
                 create_explosion_sprite(world, b_t.pos, explosion)
+                enemies_killed += 1
                 break
+                
+    
+    return enemies_killed

@@ -242,7 +242,7 @@ def create_image(
 
 
 def create_ship(
-    world: esper.World, player_cfg: dict, level_info: dict, player_rotations: int
+    world: esper.World, player_cfg: dict, level_info: dict, player_rotations: int, priority: int = 34
 ) -> int:
     """
     Creates a player ship entity in the game world with the specified configuration.
@@ -299,6 +299,7 @@ def create_ship(
         CRotation(directions, level_info["rotation_delay"]),
     )
     world.add_component(player_entity, CPlayerState())
+    world.add_component(player_entity, CRenderPriority(priority))
     return player_entity
 
 
@@ -426,7 +427,7 @@ def create_info_bar(
 
     world.add_component(bar_entity, CTransform(pos))
     world.add_component(bar_entity, CSurface.from_surface(surface))
-    world.add_component(bar_entity, CRenderPriority(50))
+    world.add_component(bar_entity, CRenderPriority(90))
 
     return bar_entity
 
@@ -477,7 +478,7 @@ def create_life_icon(
 
         world.add_component(life_entity, CTransform(pos))
         world.add_component(life_entity, CSurface.from_surface(scaled_frame))
-        world.add_component(life_entity, CRenderPriority(70))
+        world.add_component(life_entity, CRenderPriority(100))
     except ValueError as e:
         print(f"Error creating life icon: {e}")
 
@@ -514,12 +515,53 @@ def create_enemy_counter(
         counter_entity = world.create_entity()
         world.add_component(counter_entity, CTransform(pos))
         world.add_component(counter_entity, CSurface.from_surface(counter_sprite))
-        world.add_component(counter_entity, CRenderPriority(70))
+        world.add_component(counter_entity, CRenderPriority(90))
 
         counter_entities.append(counter_entity)
 
     return counter_entities
 
+
+def create_enemy_progress_bar(
+    world: esper.World,
+    base_pos: pygame.Vector2,
+    enemy_icon_count: int,
+    enemy_icon_spacing: int,
+    enemies_killed: int,
+    enemies_total: int,
+    height: int,
+    priority: int,
+) -> int:
+    """
+    Creates a progress bar entity in the game world to represent the number of enemies killed.
+    Args:
+        world (esper.World): The ECS world where the entity will be created.
+        base_pos (pygame.Vector2): The base position where the progress bar will be placed.
+        enemy_icon_width (int): The width of each enemy icon.
+        enemy_icon_count (int): The total number of enemy icons in the progress bar.
+        enemy_icon_spacing (int): The horizontal spacing between enemy icons.
+        enemies_killed (int): The number of enemies killed so far.
+        height (int): The height of the progress bar.
+        priority (int): The render priority for the progress bar entity.
+    """
+
+    total_width = enemy_icon_count * enemy_icon_spacing
+    # Calcula la proporción de enemigos eliminados
+    progress_ratio = min(enemies_killed / enemies_total, 1.0)
+    covered_width = int(progress_ratio * total_width)
+    cover_x = base_pos.x + total_width - covered_width
+
+    surface = pygame.Surface((covered_width, height))
+    color = pygame.Color(0, 0, 0)
+    surface.fill(color)
+
+    progress_bar_entity = world.create_entity()
+    world.add_component(progress_bar_entity, CTransform(pygame.Vector2(cover_x, base_pos.y)))
+    world.add_component(progress_bar_entity, CSurface.from_surface(surface))
+    world.add_component(progress_bar_entity, CRenderPriority(priority))
+
+    return progress_bar_entity
+    
 
 def create_bullet(
     world: esper.World,
