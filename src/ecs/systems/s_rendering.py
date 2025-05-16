@@ -18,6 +18,9 @@ def system_rendering(
 
         if world.has_component(entity, CTagPauseText) and not game_paused:
             continue
+        
+        if not getattr(c_surface, "visible", True):
+            continue
 
         priority = 0
         if world.has_component(entity, CRenderPriority):

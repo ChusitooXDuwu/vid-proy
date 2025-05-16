@@ -25,6 +25,7 @@ class CSurface:
         self.surf.fill(color)
         self.area = self.surf.get_rect()
         self.text = None
+        self.visible = True
 
     @classmethod
     def from_surface(cls, surface: pygame.Surface):

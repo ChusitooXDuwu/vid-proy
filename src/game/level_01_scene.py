@@ -25,6 +25,8 @@ from src.ecs.components.c_bullet_type import BulletType
 from src.ecs.components.c_input_command import CInputCommand, CommandPhase
 from src.ecs.components.c_rotation import CRotation, RotationEnum
 from src.ecs.components.c_surface import CSurface
+from src.ecs.components.tags.c_tag_bullet import CTagBullet
+from src.ecs.components.tags.c_tag_enemy import CTagEnemy
 from src.ecs.components.tags.c_tag_player_points import CPlayerPoints
 from src.ecs.systems.s_animation import system_animation
 from src.ecs.systems.s_bullet_movement import system_bullet_movement
@@ -89,7 +91,30 @@ class Level01Scene(Scene):
         
         self.player_points = 0
         
+    def _set_entities_visibility(self, visible: bool):
+        # Player
+        if self.player_entity is not None and self.ecs_world.entity_exists(self.player_entity):
+            if self.ecs_world.has_component(self.player_entity, CSurface):
+                self.ecs_world.component_for_entity(self.player_entity, CSurface).visible = visible
         
+        # Intro elements
+        if self.player_1 is not None and self.ecs_world.entity_exists(self.player_1):
+            if self.ecs_world.has_component(self.player_1, CSurface):
+                self.ecs_world.component_for_entity(self.player_1, CSurface).visible = visible
+                
+        if self.stage_1 is not None and self.ecs_world.entity_exists(self.stage_1):
+            if self.ecs_world.has_component(self.stage_1, CSurface):
+                self.ecs_world.component_for_entity(self.stage_1, CSurface).visible = visible
+                
+        if self.a_d_1910 is not None and self.ecs_world.entity_exists(self.a_d_1910):
+            if self.ecs_world.has_component(self.a_d_1910, CSurface):
+                self.ecs_world.component_for_entity(self.a_d_1910, CSurface).visible = visible
+
+        # Enemies and bullets
+        for ent, c_surf in self.ecs_world.get_component(CSurface):
+            # Bullets
+            if self.ecs_world.has_component(ent, CTagBullet) or self.ecs_world.has_component(ent, CTagEnemy):
+                c_surf.visible = visible
 
     def do_draw(self, screen):
         screen.fill(self._bg_color)
@@ -189,6 +214,7 @@ class Level01Scene(Scene):
     def do_action(self, action: CInputCommand):
         if action.name == "PLAYER_PAUSE" and action.phase == CommandPhase.START:
             self._game_paused = not self._game_paused
+            self._set_entities_visibility(not self._game_paused)
             return
 
         if self._game_paused:
@@ -255,7 +281,6 @@ class Level01Scene(Scene):
                     self.bullet_timer = 0.0
 
     def do_update(self, delta_time: float):
-        self.intro_level_elapsed_time += delta_time
         if self.intro_level_elapsed_time >= self.intro_level_countdown_time:
             if self.ecs_world.entity_exists(self.a_d_1910):
                 self.ecs_world.delete_entity(self.a_d_1910)
@@ -271,6 +296,7 @@ class Level01Scene(Scene):
         )
 
         if not self._game_paused:
+            self.intro_level_elapsed_time += delta_time
             system_animation(self.ecs_world, delta_time)
             system_cloud_respawner(self.ecs_world, self.screen_rect)
             system_movement(self.ecs_world, delta_time, self.player_entity)
