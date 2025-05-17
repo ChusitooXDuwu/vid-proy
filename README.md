@@ -23,10 +23,10 @@
 | Colisión de balas del jugador con los enemigos | 0.5 | ✅ | Julian Padilla |
 | Colisión de balas enemigas con el jugador | 0.5 | ❌ |  |
 | Posibilidad de pausar el juego. Los enemigos, jugador y proyectiles deben volverse invisibles al pausar el juego. Se debe mostrar un texto de **PAUSED** o similar parpadeando | 1 | ✅ | Nicolas Carvajal / Sofia Velasquez |
-| Texto (**PLAYER 1** y **FECHA** del nivel) y sonido de introducción al comenzar el primer nivel | 1 | ✅ / ❌ | Julian Padilla |
+| Texto (**PLAYER 1** y **FECHA** del nivel) y sonido de introducción al comenzar el primer nivel | 1 | ✅ | Julian Padilla |
 | Despliegue del texto de puntaje en la parte superior con su texto **1-UP:** | 1 | ✅ | Sofia Velasquez |
 | Un contador enemigos eliminados en la parte inferior derecha | 1 | ✅ | Sofia Velasquez / Wyo Hann Chu |
-| Introducción de "jefe final" al eliminar 40 enemigos. Al eliminar el enemigo final se declara victoria en el juego. | 1 | ❌ |  |
+| Introducción de "jefe final" al eliminar 40 enemigos. Al eliminar el enemigo final se declara victoria en el juego. | 1 | ✅  | Julian Padilla |
 | Un mensaje/escena de **GAME OVER** y reinicio del juego cuando el personaje muera por una bala (si implementa vidas, que tengas las vidas en cuenta) | 1 | ❌ |  |
 | Sonidos implementados y animación de imágenes como en el juego original | 1 | ✅ / ❌ |  |
 
