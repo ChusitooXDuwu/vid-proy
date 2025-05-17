@@ -26,8 +26,8 @@
 | Texto (**PLAYER 1** y **FECHA** del nivel) y sonido de introducción al comenzar el primer nivel | 1 | ✅ | Julian Padilla |
 | Despliegue del texto de puntaje en la parte superior con su texto **1-UP:** | 1 | ✅ | Sofia Velasquez |
 | Un contador enemigos eliminados en la parte inferior derecha | 1 | ✅ | Sofia Velasquez / Wyo Hann Chu |
-| Introducción de "jefe final" al eliminar 40 enemigos. Al eliminar el enemigo final se declara victoria en el juego. | 1 | ✅  | Julian Padilla |
-| Un mensaje/escena de **GAME OVER** y reinicio del juego cuando el personaje muera por una bala (si implementa vidas, que tengas las vidas en cuenta) | 1 | ❌ |  |
+| Introducción de "jefe final" al eliminar 40 enemigos. Al eliminar el enemigo final se declara victoria en el juego. | 1 | ❌ |  |
+| Un mensaje/escena de **GAME OVER** y reinicio del juego cuando el personaje muera por una bala (si implementa vidas, que tengas las vidas en cuenta) | 1 | ✅ | Julian Padilla |
 | Sonidos implementados y animación de imágenes como en el juego original | 1 | ✅ / ❌ |  |
 
 ### Bonos
