@@ -15,7 +15,9 @@ from src.create.prefab_creator import (
     create_text_interface_player_points,
     create_text_interface_with_color_cycle,
     create_top_info_bar,
-    create_enemy_progress_bar
+    create_enemy_progress_bar,
+    delete_all_clouds,
+    delete_all_enemies
 )
 import pygame
 import src
@@ -26,6 +28,7 @@ from src.ecs.components.c_input_command import CInputCommand, CommandPhase
 from src.ecs.components.c_rotation import CRotation, RotationEnum
 from src.ecs.components.c_surface import CSurface
 from src.ecs.components.tags.c_tag_bullet import CTagBullet
+from src.ecs.components.tags.c_tag_cloud import CTagCloud
 from src.ecs.components.tags.c_tag_enemy import CTagEnemy
 from src.ecs.components.tags.c_tag_player_points import CPlayerPoints
 from src.ecs.systems.s_animation import system_animation
@@ -84,28 +87,30 @@ class Level01Scene(Scene):
 
         self.enemies_killed = 0
         self.enemies_total = 40
-        self.enemigos_creados = 0
-        self.enemigos_activos = []
 
         self.total_spawned = 0
-        
         self.player_points = 0
-        
+
+        self._game_over = False
+        self._game_over_timer = 0.0
+        self._game_over_delay = 2.0
+        self._waiting_to_switch = False
+
     def _set_entities_visibility(self, visible: bool):
         # Player
         if self.player_entity is not None and self.ecs_world.entity_exists(self.player_entity):
             if self.ecs_world.has_component(self.player_entity, CSurface):
                 self.ecs_world.component_for_entity(self.player_entity, CSurface).visible = visible
-        
+
         # Intro elements
         if self.player_1 is not None and self.ecs_world.entity_exists(self.player_1):
             if self.ecs_world.has_component(self.player_1, CSurface):
                 self.ecs_world.component_for_entity(self.player_1, CSurface).visible = visible
-                
+
         if self.stage_1 is not None and self.ecs_world.entity_exists(self.stage_1):
             if self.ecs_world.has_component(self.stage_1, CSurface):
                 self.ecs_world.component_for_entity(self.stage_1, CSurface).visible = visible
-                
+
         if self.a_d_1910 is not None and self.ecs_world.entity_exists(self.a_d_1910):
             if self.ecs_world.has_component(self.a_d_1910, CSurface):
                 self.ecs_world.component_for_entity(self.a_d_1910, CSurface).visible = visible
@@ -304,9 +309,9 @@ class Level01Scene(Scene):
             system_player_state(self.ecs_world)
             system_bullet_movement(self.ecs_world, delta_time)
             system_screen_boundary_bullet(self.ecs_world, self.screen_rect)
-            
+
             self.enemies_killed += system_bullet_enemy_collision(self.ecs_world, self.explosion_cfg['enemy'])
-            
+
             # actualizar el contador de enemigos
             if hasattr(self, "enemy_progress_bar") and self.enemy_progress_bar is not None:
                 if self.ecs_world.entity_exists(self.enemy_progress_bar):
@@ -321,12 +326,35 @@ class Level01Scene(Scene):
                 8,
                 100
             )
-            
 
-            if self.intro_level_elapsed_time >= self.intro_level_countdown_time:
-                system_enemy_movement_no_rebound(self.ecs_world, self.screen_rect, self.enemies_cfg, self.total_spawned, delta_time)
+
+            if self.intro_level_elapsed_time >= self.intro_level_countdown_time and not self._game_over:
+                system_enemy_movement_no_rebound(
+                    self.ecs_world,
+                    self.screen_rect,
+                    self.enemies_cfg,
+                    self.total_spawned,
+                    delta_time
+                )
 
             system_remove_explosion_animation(self.ecs_world)
+
+            if self.enemies_killed >= self.enemies_total and not self._waiting_to_switch:
+                self._game_over = True
+                self._waiting_to_switch = True
+                self._game_over_timer = 0.0
+                self._set_entities_visibility(not self._game_over)
+                delete_all_clouds(self.ecs_world)
+                delete_all_enemies(self.ecs_world)
+                create_text_interface(self.ecs_world, self.level_01_intro_cfg, "player_1")
+                create_text_interface(self.ecs_world, self.level_01_intro_cfg, "game_over")
+
+            # Si ya se está esperando, actualizamos el temporizador
+            if self._waiting_to_switch:
+                self._game_over_timer += delta_time
+                if self._game_over_timer >= self._game_over_delay:
+                    self._reset_scene_state()
+                    self.switch_scene("LEVEL_01_MENU_SCENE")
 
             if not self.can_shoot:
                 self.bullet_timer += delta_time
@@ -338,3 +366,12 @@ class Level01Scene(Scene):
             if self.bullet_timer >= self.bullet_cooldown:
                 self.can_shoot = True
 
+    def _reset_scene_state(self):
+        self.ecs_world.clear_database()
+        self.player_entity = None
+        self._game_over = False
+        self._waiting_to_switch = False
+        self._game_over_timer = 0.0
+        self.enemies_killed = 0
+        self.total_spawned = 0
+        self.player_points = 0

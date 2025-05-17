@@ -388,6 +388,17 @@ def create_clouds(
         ecs_world.add_component(cloud_entity, CTagCloud())
         ecs_world.add_component(cloud_entity, CSpeed(-cloud_info["speed"]))
 
+def delete_all_clouds(ecs_world: esper.World) -> None:
+    cloud_entities = [ent for ent, _ in ecs_world.get_component(CTagCloud)]
+    for ent in cloud_entities:
+        if ecs_world.entity_exists(ent):
+            ecs_world.delete_entity(ent)
+
+def delete_all_enemies(ecs_world: esper.World) -> None:
+    cloud_entities = [ent for ent, _ in ecs_world.get_component(CTagEnemy)]
+    for ent in cloud_entities:
+        if ecs_world.entity_exists(ent):
+            ecs_world.delete_entity(ent)
 
 def create_pixel_grid(
     ecs_world: esper.World,
