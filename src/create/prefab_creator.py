@@ -1,10 +1,10 @@
 import random
+import math
 import pygame
 import esper
-import math
 
 from src.ecs.components.c_animation import CAnimation
-from src.ecs.components.c_bullet_type import BulletType, CBulletType
+
 from src.ecs.components.c_color_cycle import CColorCycle
 from src.ecs.components.c_input_command import CInputCommand
 from src.ecs.components.c_path_change import CPathChange
@@ -140,14 +140,15 @@ def create_text_interface(
     return create_text(
         world, interface_info[interface_type]["text"], font, color, pos, center
     )
-    
+
+
 def create_text_interface_player_points(
     world: esper.World, interface_info: dict, interface_type: str
 ) -> int:
     font = ServiceLocator.fonts_service.get(
         interface_info["font"], interface_info[interface_type]["size"]
     )
-     
+
     color = pygame.Color(
         interface_info[interface_type]["color"]["r"],
         interface_info[interface_type]["color"]["g"],
@@ -158,15 +159,15 @@ def create_text_interface_player_points(
         interface_info[interface_type]["pos"]["x"],
         interface_info[interface_type]["pos"]["y"],
     )
-    
+
     center = interface_info[interface_type].get("center", False)
-    
+
     text = create_text(
         world, interface_info[interface_type]["text"], font, color, pos, center
     )
-    
+
     world.add_component(text, CPlayerPoints())
-    
+
     return text
 
 
@@ -239,7 +240,7 @@ def create_text_interface_with_color_cycle(
 
 
 def create_image(
-    world: esper.World, interface_info: dict, priority: int, image_type: str
+    world: esper.World, interface_info: dict, _: int, image_type: str
 ) -> int:
     """
     Creates a sprite entity in the given ECS world using the specified image type
@@ -271,7 +272,11 @@ def create_image(
 
 
 def create_ship(
-    world: esper.World, player_cfg: dict, level_info: dict, player_rotations: int, priority: int = 34
+    world: esper.World,
+    player_cfg: dict,
+    level_info: dict,
+    player_rotations: int,
+    priority: int = 34,
 ) -> int:
     """
     Creates a player ship entity in the game world with the specified configuration.
@@ -388,17 +393,20 @@ def create_clouds(
         ecs_world.add_component(cloud_entity, CTagCloud())
         ecs_world.add_component(cloud_entity, CSpeed(-cloud_info["speed"]))
 
+
 def delete_all_clouds(ecs_world: esper.World) -> None:
     cloud_entities = [ent for ent, _ in ecs_world.get_component(CTagCloud)]
     for ent in cloud_entities:
         if ecs_world.entity_exists(ent):
             ecs_world.delete_entity(ent)
 
+
 def delete_all_enemies(ecs_world: esper.World) -> None:
     cloud_entities = [ent for ent, _ in ecs_world.get_component(CTagEnemy)]
     for ent in cloud_entities:
         if ecs_world.entity_exists(ent):
             ecs_world.delete_entity(ent)
+
 
 def create_pixel_grid(
     ecs_world: esper.World,
@@ -596,19 +604,20 @@ def create_enemy_progress_bar(
     surface.fill(color)
 
     progress_bar_entity = world.create_entity()
-    world.add_component(progress_bar_entity, CTransform(pygame.Vector2(cover_x, base_pos.y)))
+    world.add_component(
+        progress_bar_entity, CTransform(pygame.Vector2(cover_x, base_pos.y))
+    )
     world.add_component(progress_bar_entity, CSurface.from_surface(surface))
     world.add_component(progress_bar_entity, CRenderPriority(priority))
 
     return progress_bar_entity
-    
+
 
 def create_bullet(
     world: esper.World,
     direction: pygame.Vector2,
     player_entity: int,
     bullet_cfg: dict,
-    bullet_type: int = 1,
 ) -> int:
 
     c_transform = world.component_for_entity(player_entity, CTransform)
@@ -664,36 +673,42 @@ def create_explosion(
     ServiceLocator.sounds_service.play(explosion_cfg["sound"])
     return explosion_entity
 
+
 def create_enemy(world: esper.World, pos: pygame.Vector2, enemies_info: dict):
     enemy_entity = world.create_entity()
 
-    sprite_sheet = pygame.image.load(enemies_info['image']).convert_alpha()
+    sprite_sheet = pygame.image.load(enemies_info["image"]).convert_alpha()
 
     surface = CSurface.from_surface(sprite_sheet)
     surface.area = pygame.Rect(0, 0, 16, 16)
     world.add_component(enemy_entity, surface)
     world.add_component(enemy_entity, CTransform(pos))
     world.add_component(enemy_entity, CVelocity(pygame.Vector2(0, 0)))
-    world.add_component(enemy_entity, CTagEnemy(enemies_info['points']))
-    world.add_component(enemy_entity, CAnimation(enemies_info['animations']))
+    world.add_component(enemy_entity, CTagEnemy(enemies_info["points"]))
+    world.add_component(enemy_entity, CAnimation(enemies_info["animations"]))
     world.add_component(enemy_entity, CPathChange())
 
     return enemy_entity
 
-def spawn_enemy_random(world: esper.World, screen_rect: pygame.Rect, enemies_info: dict):
-    side = random.choice(['top', 'bottom', 'left', 'right'])
 
-    if side == 'top':
+def spawn_enemy_random(
+    world: esper.World, screen_rect: pygame.Rect, enemies_info: dict
+):
+    side = random.choice(["top", "bottom", "left", "right"])
+
+    x, y = 0, 0
+    SCREEN_OFFSET = 16
+    if side == "top":
         x = random.uniform(0, screen_rect.width)
-        y = 0 - 16  # Un poco fuera de pantalla
-    elif side == 'bottom':
+        y = 0 - SCREEN_OFFSET  # Un poco fuera de pantalla
+    elif side == "bottom":
         x = random.uniform(0, screen_rect.width)
-        y = screen_rect.height + 16
-    elif side == 'left':
-        x = 0 - 16
+        y = screen_rect.height + SCREEN_OFFSET
+    elif side == "left":
+        x = 0 - SCREEN_OFFSET
         y = random.uniform(0, screen_rect.height)
-    elif side == 'right':
-        x = screen_rect.width + 16
+    elif side == "right":
+        x = screen_rect.width + SCREEN_OFFSET
         y = random.uniform(0, screen_rect.height)
 
     pos = pygame.Vector2(x, y)
@@ -705,16 +720,16 @@ def spawn_enemy_random(world: esper.World, screen_rect: pygame.Rect, enemies_inf
     enemy_entity = create_enemy(world, pos, enemies_info)
     world.component_for_entity(enemy_entity, CVelocity).velocity = direction
 
-def create_explosion_sprite(world: esper.World, pos: pygame.Vector2, explosion: dict) -> int:
-    full_surface = ServiceLocator.images_service.get(explosion['image']).convert_alpha()
+
+def create_explosion_sprite(
+    world: esper.World, pos: pygame.Vector2, explosion: dict
+) -> int:
+    full_surface = ServiceLocator.images_service.get(explosion["image"]).convert_alpha()
     number_frames = explosion["animations"]["number_frames"]
     frame_width = full_surface.get_width() // number_frames
     frame_height = full_surface.get_height()
 
-    centered_pos = pygame.Vector2(
-        pos.x - frame_width // 2,
-        pos.y - frame_height // 2
-    )
+    centered_pos = pygame.Vector2(pos.x - frame_width // 2, pos.y - frame_height // 2)
 
     vel = pygame.Vector2(0, 0)
     explosion_entity = create_sprite(world, centered_pos, vel, full_surface, 80)

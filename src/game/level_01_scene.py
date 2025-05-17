@@ -10,38 +10,30 @@ from src.create.prefab_creator import (
     create_life_icon,
     create_pause_text,
     create_ship,
-    create_text,
     create_text_interface,
     create_text_interface_player_points,
     create_text_interface_with_color_cycle,
     create_top_info_bar,
     create_enemy_progress_bar,
     delete_all_clouds,
-    delete_all_enemies
+    delete_all_enemies,
 )
-import pygame
-import src
-from src.create.prefab_creator import create_clouds, create_enemy, create_enemy_counter, create_image, create_info_bar, create_life_icon, create_ship, create_text_interface, create_text_interface_with_color_cycle, spawn_enemy_random
-from src.create.prefab_creator import create_bullet, create_clouds, create_enemy_counter, create_image, create_info_bar, create_life_icon, create_ship, create_text_interface, create_top_info_bar
-from src.ecs.components.c_bullet_type import BulletType
 from src.ecs.components.c_input_command import CInputCommand, CommandPhase
 from src.ecs.components.c_rotation import CRotation, RotationEnum
 from src.ecs.components.c_surface import CSurface
 from src.ecs.components.tags.c_tag_bullet import CTagBullet
-from src.ecs.components.tags.c_tag_cloud import CTagCloud
 from src.ecs.components.tags.c_tag_enemy import CTagEnemy
-from src.ecs.components.tags.c_tag_player_points import CPlayerPoints
 from src.ecs.systems.s_animation import system_animation
 from src.ecs.systems.s_bullet_movement import system_bullet_movement
 from src.ecs.systems.s_cloud_respawner import system_cloud_respawner
 from src.ecs.systems.s_collision_bullet_enemy import system_bullet_enemy_collision
 from src.ecs.systems.s_color_cycle import system_color_cycle
 from src.ecs.systems.s_enemy_movement_no_rebound import system_enemy_movement_no_rebound
-from src.ecs.systems.s_enemy_steering import system_enemy_steering
-from src.ecs.systems.s_explosion_animation_end import system_explosion_animation_end
 from src.ecs.systems.s_movement import system_movement
 from src.ecs.systems.s_player_state import system_player_state
-from src.ecs.systems.s_remove_explosion_animation import system_remove_explosion_animation
+from src.ecs.systems.s_remove_explosion_animation import (
+    system_remove_explosion_animation,
+)
 from src.ecs.systems.s_rotation_update import system_rotation_update
 from src.ecs.systems.s_screen_boundary_bullet import system_screen_boundary_bullet
 from src.engine.scenes.scene import Scene
@@ -97,32 +89,51 @@ class Level01Scene(Scene):
         self._game_over_delay = 3.0
         self._waiting_to_switch = False
 
+        self.enemy_progress_bar = None
+
+        self.player_points_text = None
+        self.enemy_counter_base_pos = None
+        self.enemy_icon_count = None
+        self.enemy_icon_spacing = None
+
     def _set_entities_visibility(self, visible: bool):
         # Player
-        if self.player_entity is not None and self.ecs_world.entity_exists(self.player_entity):
+        if self.player_entity is not None and self.ecs_world.entity_exists(
+            self.player_entity
+        ):
             if self.ecs_world.has_component(self.player_entity, CSurface):
-                self.ecs_world.component_for_entity(self.player_entity, CSurface).visible = visible
+                self.ecs_world.component_for_entity(
+                    self.player_entity, CSurface
+                ).visible = visible
 
         # Intro elements
         if self.player_1 is not None and self.ecs_world.entity_exists(self.player_1):
             if self.ecs_world.has_component(self.player_1, CSurface):
-                self.ecs_world.component_for_entity(self.player_1, CSurface).visible = visible
+                self.ecs_world.component_for_entity(self.player_1, CSurface).visible = (
+                    visible
+                )
 
         if self.stage_1 is not None and self.ecs_world.entity_exists(self.stage_1):
             if self.ecs_world.has_component(self.stage_1, CSurface):
-                self.ecs_world.component_for_entity(self.stage_1, CSurface).visible = visible
+                self.ecs_world.component_for_entity(self.stage_1, CSurface).visible = (
+                    visible
+                )
 
         if self.a_d_1910 is not None and self.ecs_world.entity_exists(self.a_d_1910):
             if self.ecs_world.has_component(self.a_d_1910, CSurface):
-                self.ecs_world.component_for_entity(self.a_d_1910, CSurface).visible = visible
+                self.ecs_world.component_for_entity(self.a_d_1910, CSurface).visible = (
+                    visible
+                )
 
         # Enemies and bullets
         for ent, c_surf in self.ecs_world.get_component(CSurface):
             # Bullets
-            if self.ecs_world.has_component(ent, CTagBullet) or self.ecs_world.has_component(ent, CTagEnemy):
+            if self.ecs_world.has_component(
+                ent, CTagBullet
+            ) or self.ecs_world.has_component(ent, CTagEnemy):
                 c_surf.visible = visible
 
-    def do_draw(self, screen):
+    def do_draw(self, screen, _: bool = False):
         screen.fill(self._bg_color)
         return super().do_draw(screen, self._game_paused)
 
@@ -169,8 +180,10 @@ class Level01Scene(Scene):
             self.ecs_world, self.level_01_intro_cfg, "high_score_10000"
         )
         create_text_interface(self.ecs_world, self.level_01_intro_cfg, "1-UP")
-        self.player_points_text = create_text_interface_player_points(self.ecs_world, self.level_01_intro_cfg, "1-UP_00")
-        
+        self.player_points_text = create_text_interface_player_points(
+            self.ecs_world, self.level_01_intro_cfg, "1-UP_00"
+        )
+
         create_text_interface(self.ecs_world, self.level_01_intro_cfg, "2-UP")
 
         base_x = 30  # TODO: Use game config
@@ -203,7 +216,7 @@ class Level01Scene(Scene):
             count=self.enemy_icon_count,
             spacing=self.enemy_icon_spacing,
         )
-        
+
         create_text_interface(self.ecs_world, self.level_01_intro_cfg, "credit")
         create_text_interface(self.ecs_world, self.level_01_intro_cfg, "credit_00")
 
@@ -221,7 +234,9 @@ class Level01Scene(Scene):
 
     def do_action(self, action: CInputCommand):
         if action.name == "PLAYER_PAUSE" and action.phase == CommandPhase.START:
-            ServiceLocator.sounds_service.play(self.level_01_intro_cfg["pause"]["sound"])
+            ServiceLocator.sounds_service.play(
+                self.level_01_intro_cfg["pause"]["sound"]
+            )
             self._game_paused = not self._game_paused
             self._set_entities_visibility(not self._game_paused)
             return
@@ -284,7 +299,6 @@ class Level01Scene(Scene):
                             direction,
                             self.player_entity,
                             self.bullet_cfg,
-                            1,
                         )
 
                     self.can_shoot = False
@@ -315,10 +329,15 @@ class Level01Scene(Scene):
             system_bullet_movement(self.ecs_world, delta_time)
             system_screen_boundary_bullet(self.ecs_world, self.screen_rect)
 
-            self.enemies_killed += system_bullet_enemy_collision(self.ecs_world, self.explosion_cfg['enemy'])
+            self.enemies_killed += system_bullet_enemy_collision(
+                self.ecs_world, self.explosion_cfg["enemy"]
+            )
 
             # actualizar el contador de enemigos
-            if hasattr(self, "enemy_progress_bar") and self.enemy_progress_bar is not None:
+            if (
+                hasattr(self, "enemy_progress_bar")
+                and self.enemy_progress_bar is not None
+            ):
                 if self.ecs_world.entity_exists(self.enemy_progress_bar):
                     self.ecs_world.delete_entity(self.enemy_progress_bar)
             self.enemy_progress_bar = create_enemy_progress_bar(
@@ -329,31 +348,42 @@ class Level01Scene(Scene):
                 self.enemies_killed,
                 self.enemies_total,
                 8,
-                100
+                100,
             )
 
-
-            if self.intro_level_elapsed_time >= self.intro_level_countdown_time and not self._game_over:
+            if (
+                self.intro_level_elapsed_time >= self.intro_level_countdown_time
+                and not self._game_over
+            ):
                 system_enemy_movement_no_rebound(
                     self.ecs_world,
                     self.screen_rect,
                     self.enemies_cfg,
                     self.total_spawned,
-                    delta_time
+                    delta_time,
                 )
 
             system_remove_explosion_animation(self.ecs_world)
 
-            if self.enemies_killed >= self.enemies_total and not self._waiting_to_switch:
+            if (
+                self.enemies_killed >= self.enemies_total
+                and not self._waiting_to_switch
+            ):
                 self._game_over = True
                 self._waiting_to_switch = True
                 self._game_over_timer = 0.0
-                ServiceLocator.sounds_service.play(self.level_01_intro_cfg["end"]["sound"])
+                ServiceLocator.sounds_service.play(
+                    self.level_01_intro_cfg["end"]["sound"]
+                )
                 self._set_entities_visibility(not self._game_over)
                 delete_all_clouds(self.ecs_world)
                 delete_all_enemies(self.ecs_world)
-                create_text_interface(self.ecs_world, self.level_01_intro_cfg, "player_1")
-                create_text_interface(self.ecs_world, self.level_01_intro_cfg, "game_over")
+                create_text_interface(
+                    self.ecs_world, self.level_01_intro_cfg, "player_1"
+                )
+                create_text_interface(
+                    self.ecs_world, self.level_01_intro_cfg, "game_over"
+                )
 
             # Si ya se está esperando, actualizamos el temporizador
             if self._waiting_to_switch:
