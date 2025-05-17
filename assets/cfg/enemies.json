@@ -15,13 +15,14 @@
     },
     "boss_enemy": {
         "num_boss_enemies": 1,
+        "health": 5,
         "image": "assets/img/boss_level_01.png",
         "points": 1000,
         "spawn_position": {
             "x": 224
         },
         "velocity": {
-            "x": -30,
+            "x": -50,
             "y": 0
         },
         "animations": {

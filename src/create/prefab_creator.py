@@ -691,7 +691,9 @@ def create_enemy(
     world.add_component(enemy_entity, CTransform(pos))
     world.add_component(enemy_entity, CVelocity(pygame.Vector2(0, 0)))
     if boss_enemy:
-        world.add_component(enemy_entity, CTagBossEnemy())
+        world.add_component(
+            enemy_entity, CTagBossEnemy(enemies_info["health"], enemies_info["points"])
+        )
         world.add_component(enemy_entity, CSpeed(enemies_info["velocity"]["x"]))
     else:
         world.add_component(enemy_entity, CTagEnemy(enemies_info["points"]))

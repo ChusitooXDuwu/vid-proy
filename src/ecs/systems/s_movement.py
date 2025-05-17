@@ -18,7 +18,6 @@ def system_movement(
     enemy_components = world.get_components(
         CTransform, CVelocity, CSpeed, CTagBossEnemy
     )
-    print(enemy_components)
     c_v: CVelocity
     c_t: CTransform
     c_s: CSpeed
@@ -44,9 +43,9 @@ def system_movement(
         if direction.length_squared() != 0:
             direction = direction.normalize()
 
-        effective_vel = direction * c_s.speed * 0.5
-
-        # Change movement left or right depending on proximity to the edges and make ir proportional so that it slow down when it is close to the edges and then gradually speed up again TO THE OTHER EDGE
+        effective_vel = pygame.Vector2(0, 0)
+        effective_vel.x = direction.x * c_s.speed * 0.5
+        effective_vel.y = direction.y * c_s.speed
         enemy_vel = pygame.Vector2(boss_enemy_cfg["velocity"]["x"], 0)
 
         c_t.pos += (effective_vel + enemy_vel) * delta_time

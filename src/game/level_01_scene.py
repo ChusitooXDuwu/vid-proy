@@ -24,7 +24,6 @@ from src.ecs.components.c_surface import CSurface
 from src.ecs.components.tags.c_tag_bullet import CTagBullet
 from src.ecs.components.tags.c_tag_enemy import CTagEnemy
 from src.ecs.systems.s_animation import system_animation
-from src.ecs.systems.s_boss_enemy_movement import system_boss_enemy_movement
 from src.ecs.systems.s_boss_enemy_spawner import system_boss_enemy_spawner
 from src.ecs.systems.s_bullet_movement import system_bullet_movement
 from src.ecs.systems.s_cloud_respawner import system_respawner
@@ -336,9 +335,10 @@ class Level01Scene(Scene):
             system_bullet_movement(self.ecs_world, delta_time)
             system_screen_boundary_bullet(self.ecs_world, self.screen_rect)
 
-            self.enemies_killed += system_bullet_enemy_collision(
-                self.ecs_world, self.explosion_cfg["enemy"]
+            enemies_killed, self._game_over = system_bullet_enemy_collision(
+                self.ecs_world, self.explosion_cfg
             )
+            self.enemies_killed += enemies_killed
 
             # actualizar el contador de enemigos
             if (
@@ -381,16 +381,7 @@ class Level01Scene(Scene):
                 self.enemies_cfg["total_minion_enemies"],
             )
 
-            system_boss_enemy_movement(
-                self.ecs_world,
-                self.screen_rect,
-                self.enemies_cfg["boss_enemy"],
-            )
-
-            if (
-                False
-            ):  # TODO: Cambiar condicion a que cuando se pierden las vidas del jugador
-                self._game_over = True
+            if self._game_over and not self._waiting_to_switch:
                 self._waiting_to_switch = True
                 self._game_over_timer = 0.0
                 ServiceLocator.sounds_service.play(
