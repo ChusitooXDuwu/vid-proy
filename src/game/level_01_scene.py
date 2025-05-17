@@ -45,6 +45,7 @@ from src.ecs.systems.s_remove_explosion_animation import system_remove_explosion
 from src.ecs.systems.s_rotation_update import system_rotation_update
 from src.ecs.systems.s_screen_boundary_bullet import system_screen_boundary_bullet
 from src.engine.scenes.scene import Scene
+from src.engine.service_locator import ServiceLocator
 
 
 class Level01Scene(Scene):
@@ -80,7 +81,7 @@ class Level01Scene(Scene):
         self.stage_1 = None
         self.player_1 = None
 
-        self.intro_level_countdown_time = 4.0
+        self.intro_level_countdown_time = 3.0
         self.intro_level_elapsed_time = 0.0
         self._game_paused = False
         self._pause_text_entity = None
@@ -93,7 +94,7 @@ class Level01Scene(Scene):
 
         self._game_over = False
         self._game_over_timer = 0.0
-        self._game_over_delay = 2.0
+        self._game_over_delay = 3.0
         self._waiting_to_switch = False
 
     def _set_entities_visibility(self, visible: bool):
@@ -216,8 +217,11 @@ class Level01Scene(Scene):
             self.ecs_world, self.level_01_intro_cfg, "player_1"
         )
 
+        ServiceLocator.sounds_service.play(self.level_01_intro_cfg["start"]["sound"])
+
     def do_action(self, action: CInputCommand):
         if action.name == "PLAYER_PAUSE" and action.phase == CommandPhase.START:
+            ServiceLocator.sounds_service.play(self.level_01_intro_cfg["pause"]["sound"])
             self._game_paused = not self._game_paused
             self._set_entities_visibility(not self._game_paused)
             return
@@ -274,13 +278,14 @@ class Level01Scene(Scene):
                     )
                     direction = c_rotation.directions[c_rotation.index]
 
-                    create_bullet(
-                        self.ecs_world,
-                        direction,
-                        self.player_entity,
-                        self.bullet_cfg,
-                        1,
-                    )
+                    if not self._game_over:
+                        create_bullet(
+                            self.ecs_world,
+                            direction,
+                            self.player_entity,
+                            self.bullet_cfg,
+                            1,
+                        )
 
                     self.can_shoot = False
                     self.bullet_timer = 0.0
@@ -339,10 +344,11 @@ class Level01Scene(Scene):
 
             system_remove_explosion_animation(self.ecs_world)
 
-            if self.enemies_killed >= self.enemies_total and not self._waiting_to_switch:
+            if self.enemies_killed >= 1 and not self._waiting_to_switch:
                 self._game_over = True
                 self._waiting_to_switch = True
                 self._game_over_timer = 0.0
+                ServiceLocator.sounds_service.play(self.level_01_intro_cfg["end"]["sound"])
                 self._set_entities_visibility(not self._game_over)
                 delete_all_clouds(self.ecs_world)
                 delete_all_enemies(self.ecs_world)
@@ -375,3 +381,4 @@ class Level01Scene(Scene):
         self.enemies_killed = 0
         self.total_spawned = 0
         self.player_points = 0
+        self.intro_level_elapsed_time = 0.0

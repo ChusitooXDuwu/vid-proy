@@ -1,5 +1,14 @@
 {
     "font": "assets/fnt/PressStart2P.ttf",
+    "start": {
+        "sound": "assets/snd/game_start.ogg"
+    },
+    "end": {
+        "sound": "assets/snd/game_over.ogg"
+    },
+    "pause": {
+        "sound": "assets/snd/game_paused.ogg"
+    },
     "player_1": {
         "text": "PLAYER 1",
         "center": true,

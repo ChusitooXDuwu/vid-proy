@@ -37,29 +37,55 @@
         }
     },
     "push_button": {
-        "text": "PUSH ENTER BUTTON",
-        "size": 8,
-        "color": {
-            "r": 0,
-            "g": 170,
-            "b": 255
-        },
-        "pos": {
-            "x": 45,
-            "y": 100
-        }
-    },
-    "one_player": {
-        "text": "ONE PLAYER ONLY",
+        "text": "PUSH ENTER TO START",
         "size": 8,
         "color": {
             "r": 255,
-            "g": 0,
-            "b": 0
+            "g": 255,
+            "b": 255
+        },
+        "pos": {
+            "x": 37,
+            "y": 100
+        }
+    },
+    "move_ship": {
+        "text": "MOVE SHIP WHIT ARROW KEYS",
+        "size": 8,
+        "color": {
+            "r": 255,
+            "g": 255,
+            "b": 255
+        },
+        "pos": {
+            "x": 13,
+            "y": 115
+        }
+    },
+    "shoot": {
+        "text": "Z KEY TO SHOOT",
+        "size": 8,
+        "color": {
+            "r": 255,
+            "g": 255,
+            "b": 255
+        },
+        "pos": {
+            "x": 60,
+            "y": 130
+        }
+    },
+    "pause": {
+        "text": "P KEY TO PAUSED",
+        "size": 8,
+        "color": {
+            "r": 255,
+            "g": 255,
+            "b": 255
         },
         "pos": {
             "x": 55,
-            "y": 115
+            "y": 145
         }
     },
     "1st_bonus": {
@@ -72,7 +98,7 @@
         },
         "pos": {
             "x": 35,
-            "y": 150
+            "y": 180
         }
     },
     "and_pts": {
@@ -85,7 +111,7 @@
         },
         "pos": {
             "x": 35,
-            "y": 165
+            "y": 195
         }
     },
     "high_score": {
