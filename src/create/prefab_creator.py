@@ -17,6 +17,7 @@ from src.ecs.components.c_speed import CSpeed
 from src.ecs.components.c_surface import CSurface
 from src.ecs.components.c_transform import CTransform
 from src.ecs.components.c_velocity import CVelocity
+from src.ecs.components.tags.c_tag_boss_enemy import CTagBossEnemy
 from src.ecs.components.tags.c_tag_bullet import CTagBullet
 from src.ecs.components.tags.c_tag_cloud import CTagCloud
 from src.ecs.components.tags.c_tag_enemy import CTagEnemy
@@ -674,7 +675,12 @@ def create_explosion(
     return explosion_entity
 
 
-def create_enemy(world: esper.World, pos: pygame.Vector2, enemies_info: dict):
+def create_enemy(
+    world: esper.World,
+    pos: pygame.Vector2,
+    enemies_info: dict,
+    boss_enemy: bool = False,
+):
     enemy_entity = world.create_entity()
 
     sprite_sheet = pygame.image.load(enemies_info["image"]).convert_alpha()
@@ -684,7 +690,11 @@ def create_enemy(world: esper.World, pos: pygame.Vector2, enemies_info: dict):
     world.add_component(enemy_entity, surface)
     world.add_component(enemy_entity, CTransform(pos))
     world.add_component(enemy_entity, CVelocity(pygame.Vector2(0, 0)))
-    world.add_component(enemy_entity, CTagEnemy(enemies_info["points"]))
+    if boss_enemy:
+        world.add_component(enemy_entity, CTagBossEnemy())
+        world.add_component(enemy_entity, CSpeed(enemies_info["velocity"]["x"]))
+    else:
+        world.add_component(enemy_entity, CTagEnemy(enemies_info["points"]))
     world.add_component(enemy_entity, CAnimation(enemies_info["animations"]))
     world.add_component(enemy_entity, CPathChange())
 

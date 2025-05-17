@@ -24,8 +24,10 @@ from src.ecs.components.c_surface import CSurface
 from src.ecs.components.tags.c_tag_bullet import CTagBullet
 from src.ecs.components.tags.c_tag_enemy import CTagEnemy
 from src.ecs.systems.s_animation import system_animation
+from src.ecs.systems.s_boss_enemy_movement import system_boss_enemy_movement
+from src.ecs.systems.s_boss_enemy_spawner import system_boss_enemy_spawner
 from src.ecs.systems.s_bullet_movement import system_bullet_movement
-from src.ecs.systems.s_cloud_respawner import system_cloud_respawner
+from src.ecs.systems.s_cloud_respawner import system_respawner
 from src.ecs.systems.s_collision_bullet_enemy import system_bullet_enemy_collision
 from src.ecs.systems.s_color_cycle import system_color_cycle
 from src.ecs.systems.s_enemy_movement_no_rebound import system_enemy_movement_no_rebound
@@ -79,7 +81,7 @@ class Level01Scene(Scene):
         self._pause_text_entity = None
 
         self.enemies_killed = 0
-        self.enemies_total = 40
+        self.enemies_total = self.enemies_cfg["total_minion_enemies"]
 
         self.total_spawned = 0
         self.player_points = 0
@@ -322,8 +324,13 @@ class Level01Scene(Scene):
         if not self._game_paused:
             self.intro_level_elapsed_time += delta_time
             system_animation(self.ecs_world, delta_time)
-            system_cloud_respawner(self.ecs_world, self.screen_rect)
-            system_movement(self.ecs_world, delta_time, self.player_entity)
+            system_respawner(self.ecs_world, self.screen_rect)
+            system_movement(
+                self.ecs_world,
+                delta_time,
+                self.player_entity,
+                self.enemies_cfg["boss_enemy"],
+            )
             system_rotation_update(self.ecs_world, delta_time)
             system_player_state(self.ecs_world)
             system_bullet_movement(self.ecs_world, delta_time)
@@ -340,6 +347,7 @@ class Level01Scene(Scene):
             ):
                 if self.ecs_world.entity_exists(self.enemy_progress_bar):
                     self.ecs_world.delete_entity(self.enemy_progress_bar)
+
             self.enemy_progress_bar = create_enemy_progress_bar(
                 self.ecs_world,
                 self.enemy_counter_base_pos,
@@ -365,10 +373,23 @@ class Level01Scene(Scene):
 
             system_remove_explosion_animation(self.ecs_world)
 
+            system_boss_enemy_spawner(
+                self.ecs_world,
+                self.screen_rect,
+                self.enemies_cfg["boss_enemy"],
+                self.enemies_killed,
+                self.enemies_cfg["total_minion_enemies"],
+            )
+
+            system_boss_enemy_movement(
+                self.ecs_world,
+                self.screen_rect,
+                self.enemies_cfg["boss_enemy"],
+            )
+
             if (
-                self.enemies_killed >= self.enemies_total
-                and not self._waiting_to_switch
-            ):
+                False
+            ):  # TODO: Cambiar condicion a que cuando se pierden las vidas del jugador
                 self._game_over = True
                 self._waiting_to_switch = True
                 self._game_over_timer = 0.0
