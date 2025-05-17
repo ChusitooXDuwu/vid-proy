@@ -44,7 +44,7 @@
 | Vistas de depurado para evaluar elementos pertinentes del juego | ❌ |
 | Sistema de edición de niveles (crear enemigos nuevos, desplazar y eliminar enemigos existentes, y guardar el nivel) | ❌ |
 | Arma adicional del jugador con un comportamiento especial | ❌ |
-| Efecto visual adicional extra sobre el juego | ❌ |
+| Efecto visual adicional extra sobre el juego | ✅ |
 | Modo "atracción" | ❌ |
 | Juego a dos jugadores | ❌ |
 | Implementar inputs de gamepad | ❌ |
