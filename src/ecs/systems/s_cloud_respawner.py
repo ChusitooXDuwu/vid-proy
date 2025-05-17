@@ -9,7 +9,7 @@ from src.ecs.components.tags.c_tag_cloud import CTagCloud
 
 def system_respawner(world: esper.World, screen: pygame.rect.Rect) -> None:
     components = world.get_components(CTransform, CSurface, CTagCloud)
-    enemy_components = world.get_components(CTransform, CSurface, CTagBossEnemy)
+    boss_enemy_components = world.get_components(CTransform, CSurface, CTagBossEnemy)
 
     for _, (c_t, c_s, _) in components:
         entity_hitbox = CSurface.get_area_relative(c_s.area, c_t.pos)
@@ -28,7 +28,7 @@ def system_respawner(world: esper.World, screen: pygame.rect.Rect) -> None:
         elif entity_hitbox.top > screen.bottom:
             c_t.pos.y = -height / 2
 
-    for _, (c_t, c_s, _) in enemy_components:
+    for _, (c_t, c_s, _) in boss_enemy_components:
         entity_hitbox = CSurface.get_area_relative(c_s.area, c_t.pos)
         width = entity_hitbox.width
         height = entity_hitbox.height

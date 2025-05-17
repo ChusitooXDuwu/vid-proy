@@ -403,8 +403,10 @@ def delete_all_clouds(ecs_world: esper.World) -> None:
 
 
 def delete_all_enemies(ecs_world: esper.World) -> None:
-    cloud_entities = [ent for ent, _ in ecs_world.get_component(CTagEnemy)]
-    for ent in cloud_entities:
+    enemy_entities = ecs_world.get_components(CTagEnemy)
+    boss_enemy_entities = ecs_world.get_components(CTagBossEnemy)
+    enemy_entities.extend(boss_enemy_entities)
+    for ent, _ in enemy_entities:
         if ecs_world.entity_exists(ent):
             ecs_world.delete_entity(ent)
 

@@ -335,7 +335,7 @@ class Level01Scene(Scene):
             system_bullet_movement(self.ecs_world, delta_time)
             system_screen_boundary_bullet(self.ecs_world, self.screen_rect)
 
-            enemies_killed, self._game_over = system_bullet_enemy_collision(
+            enemies_killed, self._enemy_boss_defeated = system_bullet_enemy_collision(
                 self.ecs_world, self.explosion_cfg
             )
             self.enemies_killed += enemies_killed
@@ -373,15 +373,17 @@ class Level01Scene(Scene):
 
             system_remove_explosion_animation(self.ecs_world)
 
-            system_boss_enemy_spawner(
-                self.ecs_world,
-                self.screen_rect,
-                self.enemies_cfg["boss_enemy"],
-                self.enemies_killed,
-                self.enemies_cfg["total_minion_enemies"],
-            )
+            if not self._game_over:
+                system_boss_enemy_spawner(
+                    self.ecs_world,
+                    self.screen_rect,
+                    self.enemies_cfg["boss_enemy"],
+                    self.enemies_killed,
+                    self.enemies_cfg["total_minion_enemies"],
+                )
 
-            if self._game_over and not self._waiting_to_switch:
+            if self._enemy_boss_defeated and not self._waiting_to_switch:
+                self._game_over = True
                 self._waiting_to_switch = True
                 self._game_over_timer = 0.0
                 ServiceLocator.sounds_service.play(

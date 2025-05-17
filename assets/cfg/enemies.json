@@ -1,7 +1,7 @@
 {
     "image": "assets/img/enemy_01.png",
     "points": 100,
-    "total_minion_enemies": 2,
+    "total_minion_enemies": 40,
     "animations": {
         "number_frames": 16,
         "list": [
