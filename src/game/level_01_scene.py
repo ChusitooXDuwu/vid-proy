@@ -344,7 +344,7 @@ class Level01Scene(Scene):
 
             system_remove_explosion_animation(self.ecs_world)
 
-            if self.enemies_killed >= 1 and not self._waiting_to_switch:
+            if self.enemies_killed >= self.enemies_total and not self._waiting_to_switch:
                 self._game_over = True
                 self._waiting_to_switch = True
                 self._game_over_timer = 0.0
