@@ -1,7 +1,10 @@
 import json
 import pygame
 
-from src.create.prefab_creator import create_image, create_text_interface
+from src.create.prefab_creator import create_image, create_pixel_grid, create_text_interface
+from src.ecs.systems.s_render_pixels import system_render_pixels
+from src.ecs.systems.s_rendering import system_rendering
+from src.ecs.systems.s_reveal_animation import system_reveal_animation
 from src.engine.scenes.scene import Scene
 from src.ecs.components.c_input_command import CInputCommand
 
@@ -19,11 +22,14 @@ class Level01MenuScene(Scene):
         self.countdown_time = 4.0
         self.elapsed_time = 0.0
 
-    def do_create(self):
+        self.showing_transition = False
+        self.transition_elapsed = 0.0
+        self.transition_duration = 2.03  # Igual que ScoreTableScene
 
+    def do_create(self):
         self.elapsed_time = 0.0
 
-        create_image(self.ecs_world, self.level_01_menu_cfg, 100,"logo")
+        create_image(self.ecs_world, self.level_01_menu_cfg, 100, "logo")
         create_image(self.ecs_world, self.level_01_menu_cfg, 100, "small_level_counter")
         create_text_interface(self.ecs_world, self.level_01_menu_cfg, "play_prompt")
         create_text_interface(self.ecs_world, self.level_01_menu_cfg, "copyright")
@@ -34,9 +40,7 @@ class Level01MenuScene(Scene):
         create_text_interface(self.ecs_world, self.level_01_menu_cfg, "1st_bonus")
         create_text_interface(self.ecs_world, self.level_01_menu_cfg, "and_pts")
         create_text_interface(self.ecs_world, self.level_01_menu_cfg, "high_score")
-        create_text_interface(
-            self.ecs_world, self.level_01_menu_cfg, "high_score_10000"
-        )
+        create_text_interface(self.ecs_world, self.level_01_menu_cfg, "high_score_10000")
         create_text_interface(self.ecs_world, self.level_01_menu_cfg, "1-UP")
         create_text_interface(self.ecs_world, self.level_01_menu_cfg, "1-UP_00")
         create_text_interface(self.ecs_world, self.level_01_menu_cfg, "2-UP")
@@ -49,5 +53,29 @@ class Level01MenuScene(Scene):
         )
 
     def do_action(self, action: CInputCommand):
-        if action.name == "START_GAME":
-            self.switch_scene("LEVEL_01_SCENE")
+        if action.name == "START_GAME" and not self.showing_transition:
+            self.showing_transition = True
+            self.transition_elapsed = 0.0
+            create_pixel_grid(
+                self.ecs_world,
+                self._game_engine.screen.get_width(),
+                self._game_engine.screen.get_height(),
+                10,
+                pygame.Color(16, 4, 116),
+            )
+
+    def do_update(self, delta_time: float):
+        self.elapsed_time += delta_time
+
+        if self.showing_transition:
+            self.transition_elapsed += delta_time
+            self.tick = int(self.transition_elapsed * 150)
+            system_reveal_animation(self.ecs_world, self.tick)
+
+            if self.transition_elapsed >= self.transition_duration:
+                self.switch_scene("LEVEL_01_SCENE")
+
+    def do_draw(self, screen):
+        system_rendering(self.ecs_world, screen)
+        system_render_pixels(self.ecs_world, screen)
+
