@@ -32,6 +32,8 @@ class ScoreTableScene(Scene):
     def do_create(self):
 
         self.elapsed_time = 0.0
+        self.transition_elapsed = 0.0
+        self.showing_transition = False
 
         create_image(self.ecs_world, self.score_table_cfg, 100, "logo")
         create_image(self.ecs_world, self.score_table_cfg, 100, "small_level_counter")
