@@ -50,12 +50,12 @@
         }
     },
     "move_ship": {
-        "text": "MOVE SHIP WHIT ARROW KEYS",
+        "text": "MOVE SHIP WITH ARROW KEYS",
         "size": 8,
         "color": {
             "r": 255,
-            "g": 255,
-            "b": 255
+            "g": 212,
+            "b": 63
         },
         "pos": {
             "x": 13,
@@ -67,8 +67,8 @@
         "size": 8,
         "color": {
             "r": 255,
-            "g": 255,
-            "b": 255
+            "g": 212,
+            "b": 63
         },
         "pos": {
             "x": 60,
@@ -76,12 +76,12 @@
         }
     },
     "pause": {
-        "text": "P KEY TO PAUSED",
+        "text": "P KEY TO PAUSE",
         "size": 8,
         "color": {
             "r": 255,
-            "g": 255,
-            "b": 255
+            "g": 212,
+            "b": 63
         },
         "pos": {
             "x": 55,

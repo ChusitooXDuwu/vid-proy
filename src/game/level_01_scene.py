@@ -66,9 +66,15 @@ class Level01Scene(Scene):
             self.level_info["bg"]["color"]["g"],
             self.level_info["bg"]["color"]["b"],
         )
-        self.bullet_timer = None
-        self.bullet_cooldown = None
-        self.can_shoot = None
+        
+        self.bullet_timer = 0.0  # TODO: Use game config
+        self.bullet_cooldown = 0.0001  # TODO: Use game config
+        self.can_shoot = True
+        
+        # self.bullet_timer = None
+        # self.bullet_cooldown = None
+        # self.can_shoot = None
+        
         self.enemy_counters = None
         self.a_d_1910 = None
         self.stage_1 = None
@@ -96,6 +102,10 @@ class Level01Scene(Scene):
         self.enemy_counter_base_pos = None
         self.enemy_icon_count = None
         self.enemy_icon_spacing = None
+        
+        self.lifes = []
+        
+        
 
     def _set_entities_visibility(self, visible: bool):
         # Player
@@ -134,11 +144,13 @@ class Level01Scene(Scene):
             ) or self.ecs_world.has_component(ent, CTagEnemy):
                 c_surf.visible = visible
 
+
     def do_draw(self, screen, _: bool = False):
         screen.fill(self._bg_color)
         return super().do_draw(screen, self._game_paused)
 
     def do_create(self):
+        # Background Clouds
         create_clouds(
             self.ecs_world,
             self.level_info["clouds"]["clouds_back"],
@@ -149,29 +161,23 @@ class Level01Scene(Scene):
             self.level_info["clouds"]["clouds_middle"],
             30,
         )
+        create_clouds(
+            self.ecs_world,
+            self.level_info["clouds"]["clouds_front"],
+            35,
+        )
+        
+        # Player Ship
         self.player_entity = create_ship(
             self.ecs_world,
             self.player_cfg,
             self.level_info["player_spawn"],
             self._player_rotations,
         )
-        create_clouds(
-            self.ecs_world,
-            self.level_info["clouds"]["clouds_front"],
-            35,
-        )
 
-        self.bullet_timer = 0.0  # TODO: Use game config
-        self.bullet_cooldown = 0.0001  # TODO: Use game config
-        self.can_shoot = True
+        # Top Bar Elements
         create_top_info_bar(self.ecs_world, self.screen_rect.width)
-
-        bottom_bar_height = 10  # TODO: Use game config
-        bottom_bar_pos = pygame.Vector2(0, self.screen_rect.height - bottom_bar_height)
-        create_info_bar(
-            self.ecs_world, self.screen_rect.width, bottom_bar_height, bottom_bar_pos
-        )
-
+        
         create_image(
             self.ecs_world, self.level_01_intro_cfg, 100, "small_level_counter"
         )
@@ -186,25 +192,38 @@ class Level01Scene(Scene):
         )
 
         create_text_interface(self.ecs_world, self.level_01_intro_cfg, "2-UP")
+        
+        # Bottom Bar Elements
+        bottom_bar_height = 10  # TODO: Use game config
+        bottom_bar_pos = pygame.Vector2(0, self.screen_rect.height - bottom_bar_height)
+        
+        create_info_bar(
+            self.ecs_world, self.screen_rect.width, bottom_bar_height, bottom_bar_pos
+        )
 
-        base_x = 30  # TODO: Use game config
-        life_pos_y = 20  # TODO: Use game config
+        
 
-        create_life_icon(
+        self.lifes.append(create_life_icon(
             self.ecs_world,
             self.player_cfg,
-            pygame.Vector2(base_x - 10, life_pos_y),  # TODO: Use game config
-        )
-        create_life_icon(
+            pygame.Vector2(10, 20),  
+        ))
+        self.lifes.append(create_life_icon(
             self.ecs_world,
             self.player_cfg,
-            pygame.Vector2(base_x + 10, life_pos_y),  # TODO: Use game config
-        )
-
-        self._pause_text_entity = create_pause_text(
-            self.ecs_world, self.level_info, "pause_text"
-        )
-
+            pygame.Vector2(25, 20),  
+        ))
+        self.lifes.append( create_life_icon(
+            self.ecs_world,
+            self.player_cfg,
+            pygame.Vector2(40, 20),  
+        ))
+        self.lifes.append( create_life_icon(
+            self.ecs_world,
+            self.player_cfg,
+            pygame.Vector2(55, 20),  
+        ))
+        
         self.enemy_counter_base_pos = pygame.Vector2(
             10, self.screen_rect.height - 10
         )  # TODO: Use game config
@@ -220,7 +239,14 @@ class Level01Scene(Scene):
 
         create_text_interface(self.ecs_world, self.level_01_intro_cfg, "credit")
         create_text_interface(self.ecs_world, self.level_01_intro_cfg, "credit_00")
-
+        
+        
+        # Pause Text
+        self._pause_text_entity = create_pause_text(
+            self.ecs_world, self.level_info, "pause_text"
+        )
+        
+        # Intro Elements
         self.a_d_1910 = create_text_interface_with_color_cycle(
             self.ecs_world, self.level_01_intro_cfg, "a_d_1910"
         )
@@ -233,6 +259,9 @@ class Level01Scene(Scene):
 
         ServiceLocator.sounds_service.play(self.level_01_intro_cfg["start"]["sound"])
 
+    
+    
+    
     def do_action(self, action: CInputCommand):
         if action.name == "PLAYER_PAUSE" and action.phase == CommandPhase.START:
             ServiceLocator.sounds_service.play(
@@ -415,6 +444,7 @@ class Level01Scene(Scene):
             self.bullet_timer += delta_time
             if self.bullet_timer >= self.bullet_cooldown:
                 self.can_shoot = True
+
 
     def _reset_scene_state(self):
         self.ecs_world.clear_database()
