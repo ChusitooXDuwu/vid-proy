@@ -35,8 +35,8 @@ def system_bullet_enemy_collision(world: esper.World, explosion: dict) -> int:
                     font = ServiceLocator.fonts_service.get(
                         "assets/fnt/PressStart2P.ttf", 8
                     )
-                    c_player_points.points += enemy_tag.points
-                    text = str(c_player_points.points)
+                    ServiceLocator.game_state.points += enemy_tag.points
+                    text = str(ServiceLocator.game_state.points)
                     c_surface.surf = font.render(text, True, (255, 255, 255))
                     c_surface.area = c_surface.surf.get_rect()
                 break

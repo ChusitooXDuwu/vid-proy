@@ -15,8 +15,8 @@
         }
     },
     "player": {
-        "sound": "assets/snd/enemy_die.ogg",
-        "image": "assets/img/explosion_middle_enemies.png",
+        "sound": "assets/snd/player_die.ogg",
+        "image": "assets/img/explosion_large_bosses_player.png",
         "animations": {
             "number_frames": 4,
             "list": [

@@ -144,7 +144,7 @@ def create_text_interface(
 
 
 def create_text_interface_player_points(
-    world: esper.World, interface_info: dict, interface_type: str
+    world: esper.World, interface_info: dict, interface_type: str, points: int
 ) -> int:
     font = ServiceLocator.fonts_service.get(
         interface_info["font"], interface_info[interface_type]["size"]
@@ -163,8 +163,9 @@ def create_text_interface_player_points(
 
     center = interface_info[interface_type].get("center", False)
 
+    display_points = "00" if points == 0 else str(points)
     text = create_text(
-        world, interface_info[interface_type]["text"], font, color, pos, center
+        world, display_points, font, color, pos, center
     )
 
     world.add_component(text, CPlayerPoints())
@@ -402,14 +403,15 @@ def delete_all_clouds(ecs_world: esper.World) -> None:
             ecs_world.delete_entity(ent)
 
 
-def delete_all_enemies(ecs_world: esper.World, explosion: dict) -> None:
+def delete_all_enemies(ecs_world: esper.World, explosion: dict = None) -> None:
     enemy_entities = ecs_world.get_components(CTagEnemy, CTransform)
     boss_enemy_entities = ecs_world.get_components(CTagBossEnemy, CTransform)
     enemy_entities.extend(boss_enemy_entities)
     for ent, (_, c_transform) in enemy_entities:
         if ecs_world.entity_exists(ent):
             ecs_world.delete_entity(ent)
-            create_explosion_sprite(ecs_world, c_transform.pos, explosion["enemy"])
+            if explosion:
+                create_explosion_sprite(ecs_world, c_transform.pos, explosion["enemy"])
 
 
 def create_pixel_grid(
@@ -536,6 +538,34 @@ def create_life_icon(
 
     return life_entity
 
+
+def create_life_icons(
+    world: esper.World,
+    player_cfg: dict,
+    number_of_lives: int = 3,
+) -> list[int]:
+    """
+    Creates a series of life icon entities in the game world.
+    Args:
+        world (esper.World): The ECS (Entity Component System) world where the entities will be created.
+        player_cfg (dict): A dictionary containing the player's configuration, including the sprite image
+            and animation details. Expected keys:
+            - "image": Path or identifier for the player's sprite image.
+            - "animations": A dictionary with animation details, including "number_frames".
+    Returns:
+        list[int]: A list of entity IDs for the created life icon entities.
+    """
+
+    life_entities = []
+    base_pos = pygame.Vector2(10, 20)
+    spacing = 15
+
+    for i in range(number_of_lives):
+        pos = pygame.Vector2(base_pos.x + (i * spacing), base_pos.y)
+        life_entity = create_life_icon(world, player_cfg, pos)
+        life_entities.append(life_entity)
+
+    return life_entities
 
 def create_enemy_counter(
     world: esper.World,
