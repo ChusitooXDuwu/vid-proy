@@ -402,13 +402,14 @@ def delete_all_clouds(ecs_world: esper.World) -> None:
             ecs_world.delete_entity(ent)
 
 
-def delete_all_enemies(ecs_world: esper.World) -> None:
-    enemy_entities = ecs_world.get_components(CTagEnemy)
-    boss_enemy_entities = ecs_world.get_components(CTagBossEnemy)
+def delete_all_enemies(ecs_world: esper.World, explosion: dict) -> None:
+    enemy_entities = ecs_world.get_components(CTagEnemy, CTransform)
+    boss_enemy_entities = ecs_world.get_components(CTagBossEnemy, CTransform)
     enemy_entities.extend(boss_enemy_entities)
-    for ent, _ in enemy_entities:
+    for ent, (_, c_transform) in enemy_entities:
         if ecs_world.entity_exists(ent):
             ecs_world.delete_entity(ent)
+            create_explosion_sprite(ecs_world, c_transform.pos, explosion["enemy"])
 
 
 def create_pixel_grid(
@@ -697,6 +698,7 @@ def create_enemy(
             enemy_entity, CTagBossEnemy(enemies_info["health"], enemies_info["points"])
         )
         world.add_component(enemy_entity, CSpeed(enemies_info["velocity"]["x"]))
+        ServiceLocator.sounds_service.play(enemies_info["sound"])
     else:
         world.add_component(enemy_entity, CTagEnemy(enemies_info["points"]))
     world.add_component(enemy_entity, CAnimation(enemies_info["animations"]))

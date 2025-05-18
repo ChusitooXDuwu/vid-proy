@@ -9,6 +9,9 @@
     "pause": {
         "sound": "assets/snd/game_paused.ogg"
     },
+    "boss_defeat": {
+        "sound": "assets/snd/game_over_1.wav"
+    },
     "player_1": {
         "text": "PLAYER 1",
         "center": true,

@@ -18,6 +18,7 @@
         "health": 5,
         "image": "assets/img/boss_level_01.png",
         "points": 1000,
+        "sound": "assets/snd/boss_spawn.wav",
         "spawn_position": {
             "x": 224
         },

@@ -95,6 +95,9 @@ class Level01Scene(Scene):
         self._game_over_timer = 0.0
         self._game_over_delay = 3.0
         self._waiting_to_switch = False
+        
+        self.game_over_countdown_time = 0.0
+        self.game_over_time_to_appear = 2.5
 
         self.enemy_progress_bar = None
 
@@ -413,27 +416,42 @@ class Level01Scene(Scene):
 
             if self._enemy_boss_defeated and not self._waiting_to_switch:
                 self._game_over = True
-                self._waiting_to_switch = True
-                self._game_over_timer = 0.0
                 ServiceLocator.sounds_service.play(
-                    self.level_01_intro_cfg["end"]["sound"]
+                    self.level_01_intro_cfg["boss_defeat"]["sound"]
                 )
-                self._set_entities_visibility(not self._game_over)
-                delete_all_clouds(self.ecs_world)
-                delete_all_enemies(self.ecs_world)
-                create_text_interface(
-                    self.ecs_world, self.level_01_intro_cfg, "player_1"
-                )
-                create_text_interface(
-                    self.ecs_world, self.level_01_intro_cfg, "game_over"
-                )
+                
 
+            
+            
+                
+            
             # Si ya se está esperando, actualizamos el temporizador
             if self._waiting_to_switch:
                 self._game_over_timer += delta_time
                 if self._game_over_timer >= self._game_over_delay:
+                    
                     self._reset_scene_state()
                     self.switch_scene("LEVEL_01_MENU_SCENE")
+            elif self._game_over:
+                        
+                delete_all_enemies(self.ecs_world, self.explosion_cfg)
+
+                self.game_over_countdown_time += delta_time
+                
+                if self.game_over_time_to_appear < self.game_over_countdown_time:
+                    ServiceLocator.sounds_service.play(
+                        self.level_01_intro_cfg["end"]["sound"]
+                    )
+                    self._waiting_to_switch = True
+                    self._game_over_timer = 0.0
+                    delete_all_clouds(self.ecs_world)
+                    self._set_entities_visibility(False)
+                    create_text_interface(
+                        self.ecs_world, self.level_01_intro_cfg, "player_1"
+                    )
+                    create_text_interface(
+                        self.ecs_world, self.level_01_intro_cfg, "game_over"
+                    )
 
             if not self.can_shoot:
                 self.bullet_timer += delta_time
