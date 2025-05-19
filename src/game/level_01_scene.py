@@ -90,15 +90,19 @@ class Level01Scene(Scene):
         self.total_spawned = 0
         self.player_points = 0
 
+        self._waiting_to_switch = False
+        
         self._game_win = False
         self._game_win_timer = 0.0
         self._game_win_delay = 2.5
-        self._waiting_to_switch = False
         self._game_win_countdown_time = 0.0
-        self._game_win_time_to_appear = 3
+        self._game_win_time_to_appear = 5
         
+        self._game_over = False
+        self._game_over_timer = 0.0
+        self._game_over_delay = 2.5
         self.game_over_countdown_time = 0.0
-        self.game_over_time_to_appear = 2.5
+        self.game_over_time_to_appear = 5
 
         self.enemy_progress_bar = None
 
@@ -376,6 +380,11 @@ class Level01Scene(Scene):
                 self.ecs_world, self.explosion_cfg, self.lifes, self.player_entity
             )
 
+        
+        if self._game_over:
+            self._handle_game_over(delta_time)
+            return
+        
         if self.player_killed:
             self._handle_player_killed(delta_time)
             return
@@ -399,9 +408,6 @@ class Level01Scene(Scene):
             self._handle_game_win(delta_time)
             return
 
-        if self._game_over:
-            self._handle_game_over(delta_time)
-            return
 
         system_enemy_movement_no_rebound(
             self.ecs_world,
@@ -486,20 +492,29 @@ class Level01Scene(Scene):
 
     def _handle_game_over(self, delta_time):
         delete_all_enemies(self.ecs_world, self.explosion_cfg)
-        self.game_over_countdown_time += delta_time
-        if self.game_over_time_to_appear < self.game_over_countdown_time:
-            ServiceLocator.sounds_service.play(
-                self.level_01_intro_cfg["end"]["sound"]
-            )
+        if self._waiting_to_switch:
+            self._game_over_timer += delta_time
+            if self._game_over_timer >= self._game_over_delay:
+                delete_all_clouds(self.ecs_world)
+                self._set_entities_visibility(False)
+                create_text_interface(
+                    self.ecs_world, self.level_01_intro_cfg, "player_1"
+                )
+                create_text_interface(
+                    self.ecs_world, self.level_01_intro_cfg, "game_over"
+                )
+                self.game_over_countdown_time += delta_time
+            if self.game_over_time_to_appear < self.game_over_countdown_time:
+                self._reset_scene_state()
+                self.switch_scene("MENU_SCENE")
+                
+        else:
+            self._waiting_to_switch = True
             self._game_over_timer = 0.0
-            delete_all_clouds(self.ecs_world)
-            self._set_entities_visibility(False)
-            create_text_interface(
-                self.ecs_world, self.level_01_intro_cfg, "player_1"
-            )
-            create_text_interface(
-                self.ecs_world, self.level_01_intro_cfg, "game_over"
-            )
+            self.game_over_countdown_time = 0.0
+            ServiceLocator.sounds_service.play(
+                    self.level_01_intro_cfg["end"]["sound"]
+                )
 
     def _handle_player_killed(self, delta_time):
         self.player_killed_countdown_time += delta_time
