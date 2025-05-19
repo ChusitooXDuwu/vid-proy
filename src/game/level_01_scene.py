@@ -11,6 +11,7 @@ from src.create.prefab_creator import (
     create_pause_text,
     create_ship,
     create_text_interface,
+    create_text_interface_high_score,
     create_text_interface_player_points,
     create_text_interface_with_color_cycle,
     create_top_info_bar,
@@ -213,12 +214,12 @@ class Level01Scene(Scene):
         )
 
         create_text_interface(self.ecs_world, self.level_01_intro_cfg, "high_score")
-        create_text_interface(
-            self.ecs_world, self.level_01_intro_cfg, "high_score_10000"
+        self.high_score_text = create_text_interface_high_score(
+            self.ecs_world, self.level_01_intro_cfg, "high_score_10000", ServiceLocator.game_state.high_score
         )
         create_text_interface(self.ecs_world, self.level_01_intro_cfg, "1-UP")
         self.player_points_text = create_text_interface_player_points(
-            self.ecs_world, self.level_01_intro_cfg, "1-UP_00", self.player_points
+            self.ecs_world, self.level_01_intro_cfg, "1-UP_00", ServiceLocator.game_state.points
         )
 
         create_text_interface(self.ecs_world, self.level_01_intro_cfg, "2-UP")

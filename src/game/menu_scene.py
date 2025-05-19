@@ -2,9 +2,10 @@ import json
 import pygame
 
 import src
-from src.create.prefab_creator import create_image, create_text_interface
+from src.create.prefab_creator import create_image, create_text_interface, create_text_interface_high_score
 from src.engine.scenes.scene import Scene
 from src.ecs.components.c_input_command import CInputCommand
+from src.engine.service_locator import ServiceLocator
 
 
 class MenuScene(Scene):
@@ -29,7 +30,9 @@ class MenuScene(Scene):
         create_text_interface(self.ecs_world, self.menu_cfg, "credit")
         create_text_interface(self.ecs_world, self.menu_cfg, "credit_00")
         create_text_interface(self.ecs_world, self.menu_cfg, "1-UP_00")
-        create_text_interface(self.ecs_world, self.menu_cfg, "high_score_10000")
+        self.high_score_text = create_text_interface_high_score(
+            self.ecs_world, self.menu_cfg, "high_score_10000", ServiceLocator.game_state.high_score
+        )
 
 
         start_game_action = self.ecs_world.create_entity()

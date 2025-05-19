@@ -7,11 +7,13 @@ from src.create.prefab_creator import (
     create_image,
     create_pixel_grid,
     create_text_interface,
+    create_text_interface_high_score,
 )
 from src.ecs.systems.s_render_pixels import system_render_pixels
 from src.ecs.systems.s_rendering import system_rendering
 from src.ecs.systems.s_reveal_animation import system_reveal_animation
 from src.engine.scenes.scene import Scene
+from src.engine.service_locator import ServiceLocator
 
 
 class ScoreTableScene(Scene):
@@ -46,7 +48,9 @@ class ScoreTableScene(Scene):
         create_text_interface(self.ecs_world, self.score_table_cfg, "leaderboard_4th")
         create_text_interface(self.ecs_world, self.score_table_cfg, "leaderboard_5th")
         create_text_interface(self.ecs_world, self.score_table_cfg, "high_score")
-        create_text_interface(self.ecs_world, self.score_table_cfg, "high_score_10000")
+        self.high_score_text = create_text_interface_high_score(
+            self.ecs_world, self.score_table_cfg, "high_score_10000", ServiceLocator.game_state.high_score
+        )
         create_text_interface(self.ecs_world, self.score_table_cfg, "1-UP")
         create_text_interface(self.ecs_world, self.score_table_cfg, "1-UP_00")
         create_text_interface(self.ecs_world, self.score_table_cfg, "2-UP")

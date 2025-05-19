@@ -6,6 +6,7 @@ from src.ecs.components.c_transform import CTransform
 from src.ecs.components.tags.c_tag_boss_enemy import CTagBossEnemy
 from src.ecs.components.tags.c_tag_bullet import CTagBullet
 from src.ecs.components.tags.c_tag_enemy import CTagEnemy
+from src.ecs.components.tags.c_tag_high_score import CHighScore
 from src.ecs.components.tags.c_tag_player_points import CPlayerPoints
 from src.engine.service_locator import ServiceLocator
 
@@ -31,7 +32,8 @@ def system_bullet_enemy_collision(world: esper.World, explosion: dict) -> int:
                 enemies_killed += 1
 
                 player_points = world.get_components(CPlayerPoints, CSurface)
-                for _, (c_player_points, c_surface) in player_points:
+                high_score = world.get_components(CHighScore, CSurface)
+                for _, (_, c_surface) in player_points:
                     font = ServiceLocator.fonts_service.get(
                         "assets/fnt/PressStart2P.ttf", 8
                     )
@@ -39,6 +41,15 @@ def system_bullet_enemy_collision(world: esper.World, explosion: dict) -> int:
                     text = str(ServiceLocator.game_state.points)
                     c_surface.surf = font.render(text, True, (255, 255, 255))
                     c_surface.area = c_surface.surf.get_rect()
+                for _, (_, c_surface) in high_score:
+                    if ServiceLocator.game_state.points > ServiceLocator.game_state.high_score:
+                        ServiceLocator.game_state.high_score = ServiceLocator.game_state.points
+                        font = ServiceLocator.fonts_service.get(
+                            "assets/fnt/PressStart2P.ttf", 8
+                        )
+                        text = str(ServiceLocator.game_state.high_score)
+                        c_surface.surf = font.render(text, True, (255, 255, 255))
+                        c_surface.area = c_surface.surf.get_rect()
                 break
 
         for boss_enemy_entity, (b_t, b_s, b_tag) in boss_enemy:

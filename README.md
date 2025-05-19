@@ -37,7 +37,7 @@
 | Ataque de enemigos en escuadrón de manera dinámica | ❌ |
 | Sistema de contador de enemigos con imágenes en vez de números | ✅ |
 | Sistema de vidas (cuatro vidas y game over) | ✅ |
-| Sistema de puntaje máximo y HIGH-SCORE, que se conserva en una sesión de juego | ❌ |
+| Sistema de puntaje máximo y HIGH-SCORE, que se conserva en una sesión de juego | ✅ |
 | Pantalla de HIGH SCORE al terminar el juego con posibilidad de escribir el nombre | ❌ |
 | Varios niveles con diferentes colores de fondo y sprites enemigos | ❌ |
 | Objetos de bono (paracaídas y sub-jefe nivel dos, tres o cuatro) | ❌ |

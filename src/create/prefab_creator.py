@@ -22,6 +22,7 @@ from src.ecs.components.tags.c_tag_bullet import CTagBullet
 from src.ecs.components.tags.c_tag_cloud import CTagCloud
 from src.ecs.components.tags.c_tag_enemy import CTagEnemy
 from src.ecs.components.tags.c_tag_explosion import CTagExplosion
+from src.ecs.components.tags.c_tag_high_score import CHighScore
 from src.ecs.components.tags.c_tag_pause_text import CTagPauseText
 from src.ecs.components.tags.c_tag_player import CTagPlayer
 from src.ecs.components.tags.c_tag_player_points import CPlayerPoints
@@ -172,6 +173,34 @@ def create_text_interface_player_points(
 
     return text
 
+def create_text_interface_high_score(
+    world: esper.World, interface_info: dict, interface_type: str, points: int
+) -> int:
+    font = ServiceLocator.fonts_service.get(
+        interface_info["font"], interface_info[interface_type]["size"]
+    )
+
+    color = pygame.Color(
+        interface_info[interface_type]["color"]["r"],
+        interface_info[interface_type]["color"]["g"],
+        interface_info[interface_type]["color"]["b"],
+    )
+
+    pos = pygame.Vector2(
+        interface_info[interface_type]["pos"]["x"],
+        interface_info[interface_type]["pos"]["y"],
+    )
+
+    center = interface_info[interface_type].get("center", False)
+
+    display_points = "00" if points == 0 else str(points)
+    text = create_text(
+        world, display_points, font, color, pos, center
+    )
+
+    world.add_component(text, CHighScore())
+
+    return text
 
 def create_pause_text(
     world: esper.World, interface_info: dict, interface_type: str
