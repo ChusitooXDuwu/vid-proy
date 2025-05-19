@@ -4,12 +4,50 @@
 
 | Nombre | Login |
 | ------ | ----- |
-| Nicolas Carvajal Chaves | n.carvajalc |
+| Nicolás Carvajal Chaves | n.carvajalc |
 | Wyo Hann Chu Mendez | w.chu | 
 | Sofia Velasquez Marin | s.velasquezm2 |
 | Julian Padilla Molina | j.padilla |
 
+## Rubrica
 
+| Dimensión | Puntos | ¿Realizado? | Responsable |
+|-----------|--------|-------------|-------------|
+| URL del proyecto finalizado con ejecutable compilado, ya sea para web o para descarga en un portal web (itch.io, GameJolt o Newgrounds) | 6 | ❌ |  |
+| Pantalla de menú principal con instrucciones y logo | 1 | ✅ | Sofia Velasquez |
+| Se dibuja el fondo de nubes y se ve el movimiento como en el juego original | 1 | ✅ | Nicolás Carvajal |
+| Movimiento de la nave del jugador | 1 | ✅ | Nicolás Carvajal |
+| Disparo de la nave del jugador | 1 | ✅  | Wyo Hann Chu |
+| Spawn de enemigos y movimiento de persecución | 1 | ✅ | Julian Padilla |
+| Disparo de balas por parte de los enemigos ocasionalmente en su movimiento básico | 1 | ❌ |  |
+| Colisión de balas del jugador con los enemigos | 0.5 | ✅ | Julian Padilla |
+| Colisión de balas enemigas con el jugador | 0.5 | ❌ |  |
+| Posibilidad de pausar el juego. Los enemigos, jugador y proyectiles deben volverse invisibles al pausar el juego. Se debe mostrar un texto de **PAUSED** o similar parpadeando | 1 | ✅ | Nicolás Carvajal / Sofia Velasquez |
+| Texto (**PLAYER 1** y **FECHA** del nivel) y sonido de introducción al comenzar el primer nivel | 1 | ✅ | Julian Padilla |
+| Despliegue del texto de puntaje en la parte superior con su texto **1-UP:** | 1 | ✅ | Sofia Velasquez |
+| Un contador enemigos eliminados en la parte inferior derecha | 1 | ✅ | Sofia Velasquez / Wyo Hann Chu |
+| Introducción de "jefe final" al eliminar 40 enemigos. Al eliminar el enemigo final se declara victoria en el juego. | 1 | ✅ | Nicolás Carvajal |
+| Un mensaje/escena de **GAME OVER** y reinicio del juego cuando el personaje muera por una bala (si implementa vidas, que tengas las vidas en cuenta) | 1 | ✅ | Julian Padilla |
+| Sonidos implementados y animación de imágenes como en el juego original | 1 | ✅ / ❌ |  |
+
+### Bonos
+
+| Dimensión | ¿Realizado? |
+|-----------|-----------|
+| Ataque de enemigos en escuadrón de manera dinámica | ❌ |
+| Sistema de contador de enemigos con imágenes en vez de números | ✅ |
+| Sistema de vidas (cuatro vidas y game over) | ✅ |
+| Sistema de puntaje máximo y HIGH-SCORE, que se conserva en una sesión de juego | ✅ |
+| Pantalla de HIGH SCORE al terminar el juego con posibilidad de escribir el nombre | ❌ |
+| Varios niveles con diferentes colores de fondo y sprites enemigos | ❌ |
+| Objetos de bono (paracaídas y sub-jefe nivel dos, tres o cuatro) | ❌ |
+| Vistas de depurado para evaluar elementos pertinentes del juego | ❌ |
+| Sistema de edición de niveles (crear enemigos nuevos, desplazar y eliminar enemigos existentes, y guardar el nivel) | ❌ |
+| Arma adicional del jugador con un comportamiento especial | ❌ |
+| Efecto visual adicional extra sobre el juego | ✅ |
+| Modo "atracción" | ❌ |
+| Juego a dos jugadores | ❌ |
+| Implementar inputs de gamepad | ❌ |
 
 ## Enunciado
 

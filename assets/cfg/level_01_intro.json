@@ -1,5 +1,17 @@
 {
     "font": "assets/fnt/PressStart2P.ttf",
+    "start": {
+        "sound": "assets/snd/game_start.ogg"
+    },
+    "end": {
+        "sound": "assets/snd/game_over.ogg"
+    },
+    "pause": {
+        "sound": "assets/snd/game_paused.ogg"
+    },
+    "boss_defeat": {
+        "sound": "assets/snd/game_over_1.wav"
+    },
     "player_1": {
         "text": "PLAYER 1",
         "center": true,
@@ -91,7 +103,7 @@
             "b": 255
         },
         "pos": {
-            "x": 35,
+            "x": 25,
             "y": 10
         }
     },
@@ -141,6 +153,34 @@
         "pos": {
             "x": 215,
             "y": 25
+        }
+    },
+    "game_over": {
+        "text": "GAME OVER",
+        "center": true,
+        "size": 8,
+        "color": {
+            "r": 255,
+            "g": 0,
+            "b": 0
+        },
+        "pos": {
+            "x": 112,
+            "y": 148
+        }
+    },
+    "game_win": {
+        "text": "YOU WIN",
+        "center": true,
+        "size": 8,
+        "color": {
+            "r": 255,
+            "g": 0,
+            "b": 0
+        },
+        "pos": {
+            "x": 112,
+            "y": 148
         }
     }
 }

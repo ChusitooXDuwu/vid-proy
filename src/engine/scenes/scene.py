@@ -33,8 +33,8 @@ class Scene:
     def do_update(self, delta_time: float):
         pass
 
-    def do_draw(self, screen):
-        system_rendering(self.ecs_world, screen)
+    def do_draw(self, screen, game_paused: bool = False):
+        system_rendering(self.ecs_world, screen, game_paused)
 
     def do_action(self, action: CInputCommand):
         pass

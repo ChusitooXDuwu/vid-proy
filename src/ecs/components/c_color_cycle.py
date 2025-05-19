@@ -15,6 +15,7 @@ class CColorCycle:
         __init__(colors: list[pygame.Color], interval: float):
             Initializes the CColorCycle component with a list of colors and a time interval.
     """
+
     def __init__(self, colors: list[pygame.Color], interval: float) -> None:
         self.colors = colors
         self.interval = interval

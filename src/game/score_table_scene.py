@@ -7,11 +7,13 @@ from src.create.prefab_creator import (
     create_image,
     create_pixel_grid,
     create_text_interface,
+    create_text_interface_high_score,
 )
 from src.ecs.systems.s_render_pixels import system_render_pixels
 from src.ecs.systems.s_rendering import system_rendering
 from src.ecs.systems.s_reveal_animation import system_reveal_animation
 from src.engine.scenes.scene import Scene
+from src.engine.service_locator import ServiceLocator
 
 
 class ScoreTableScene(Scene):
@@ -32,9 +34,11 @@ class ScoreTableScene(Scene):
     def do_create(self):
 
         self.elapsed_time = 0.0
+        self.transition_elapsed = 0.0
+        self.showing_transition = False
 
-        create_image(self.ecs_world, self.score_table_cfg, "logo")
-        create_image(self.ecs_world, self.score_table_cfg, "small_level_counter")
+        create_image(self.ecs_world, self.score_table_cfg, 100, "logo")
+        create_image(self.ecs_world, self.score_table_cfg, 100, "small_level_counter")
         create_text_interface(self.ecs_world, self.score_table_cfg, "play_prompt")
         create_text_interface(self.ecs_world, self.score_table_cfg, "copyright")
         create_text_interface(self.ecs_world, self.score_table_cfg, "score_table_label")
@@ -44,13 +48,14 @@ class ScoreTableScene(Scene):
         create_text_interface(self.ecs_world, self.score_table_cfg, "leaderboard_4th")
         create_text_interface(self.ecs_world, self.score_table_cfg, "leaderboard_5th")
         create_text_interface(self.ecs_world, self.score_table_cfg, "high_score")
-        create_text_interface(self.ecs_world, self.score_table_cfg, "high_score_10000")
+        self.high_score_text = create_text_interface_high_score(
+            self.ecs_world, self.score_table_cfg, "high_score_10000", ServiceLocator.game_state.high_score
+        )
         create_text_interface(self.ecs_world, self.score_table_cfg, "1-UP")
         create_text_interface(self.ecs_world, self.score_table_cfg, "1-UP_00")
         create_text_interface(self.ecs_world, self.score_table_cfg, "2-UP")
         create_text_interface(self.ecs_world, self.score_table_cfg, "credit")
         create_text_interface(self.ecs_world, self.score_table_cfg, "credit_00")
-        
 
     def do_update(self, delta_time: float):
         self.elapsed_time += delta_time
@@ -58,9 +63,6 @@ class ScoreTableScene(Scene):
         if not self.showing_transition and self.elapsed_time >= self.countdown_time:
             self.showing_transition = True
             self.transition_elapsed = 0.0
-            print("Transitioning to level 01 menu scene")
-            print("Creating pixel grid")
-            print("Screen size: ", self._game_engine.screen.get_width(), self._game_engine.screen.get_height())
             create_pixel_grid(
                 self.ecs_world,
                 self._game_engine.screen.get_width(),

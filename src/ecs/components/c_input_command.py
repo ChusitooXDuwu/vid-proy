@@ -13,8 +13,9 @@ class CInputCommand:
         self.key = key
         self.phase = CommandPhase.NA
         self.mouse_pos = pygame.Vector2(0, 0)
-        
+
+
 class CommandPhase(Enum):
-    NA = 0 # Not Applicable
-    START = 1 # Start of the command (pressed)
-    END = 2 # End of the command (released)
+    NA = 0
+    START = 1
+    END = 2

@@ -1,0 +1,47 @@
+{
+    "image": "assets/img/enemy_01.png",
+    "points": 100,
+    "total_minion_enemies": 40,
+    "animations": {
+        "number_frames": 16,
+        "list": [
+            {
+                "name": "directional",
+                "start": 0,
+                "end": 15,
+                "framerate": 1
+            }
+        ]
+    },
+    "boss_enemy": {
+        "num_boss_enemies": 1,
+        "health": 5,
+        "image": "assets/img/boss_level_01.png",
+        "points": 1000,
+        "sound": "assets/snd/boss_spawn.wav",
+        "spawn_position": {
+            "x": 224
+        },
+        "velocity": {
+            "x": -50,
+            "y": 0
+        },
+        "animations": {
+            "number_frames": 4,
+            "list": [
+                {
+                    "name": "IDLE",
+                    "start": 0,
+                    "end": 0,
+                    "framerate": 1
+                },
+                {
+                    "name": "ATTACK",
+                    "start": 1,
+                    "end": 3,
+                    "framerate": 60
+                }
+            ]
+        }
+    }
+}

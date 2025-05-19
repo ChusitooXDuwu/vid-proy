@@ -19,10 +19,13 @@ class CSurface:
         from_text(text: str, font: pygame.font.Font, color: pygame.Color) -> CSurface:
             Creates a CSurface instance from a text string rendered with a specified font and color.
     """
+
     def __init__(self, size: pygame.Vector2, color: pygame.Color) -> None:
         self.surf = pygame.Surface(size)
         self.surf.fill(color)
         self.area = self.surf.get_rect()
+        self.text = None
+        self.visible = True
 
     @classmethod
     def from_surface(cls, surface: pygame.Surface):
@@ -42,4 +45,5 @@ class CSurface:
         c_surf = cls(pygame.Vector2(0, 0), pygame.Color(0, 0, 0))
         c_surf.surf = font.render(text, True, color)
         c_surf.area = c_surf.surf.get_rect()
+        c_surf.text = text
         return c_surf

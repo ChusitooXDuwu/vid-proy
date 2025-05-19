@@ -4,5 +4,8 @@
     "editor.formatOnPaste": true,
     "pylint.args": [
         "--disable=missing-docstring,invalid-name"
-    ]
+    ],
+    "[python]": {
+        "editor.defaultFormatter": "ms-python.black-formatter"
+    }
 }

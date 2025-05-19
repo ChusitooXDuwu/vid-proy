@@ -1,5 +1,7 @@
 from typing import List
 
+from src.engine.service_locator import ServiceLocator
+
 
 class CAnimation:
     """
