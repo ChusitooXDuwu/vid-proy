@@ -38,14 +38,12 @@ def system_collision_enemy_player(world: esper.World, explosion: dict, lifes: li
             # world.delete_entity(player_entity)
             p_s.visible = False
             player_killed = True
-            print("Player killed")
             ()
             if len(lifes) > 0:
                 life = lifes.pop()
                 world.delete_entity(life)
             
             game_over = len(lifes) < 1
-            print(f'Lifes left: {len(lifes)}, game_over?: {game_over}')
             break
     
     if game_over or player_killed:

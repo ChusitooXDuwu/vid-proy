@@ -14,7 +14,7 @@ def system_bullet_enemy_collision(world: esper.World, explosion: dict) -> int:
     bullets = world.get_components(CTransform, CSurface, CTagBullet)
     enemies = world.get_components(CTransform, CSurface, CTagEnemy)
     boss_enemy = world.get_components(CTransform, CSurface, CTagBossEnemy)
-    game_over = False
+    game_win = False
     enemies_killed = 0
     for bullet_entity, (b_t, b_s, _) in bullets:
         bullet_rect = pygame.Rect(b_t.pos.x, b_t.pos.y, b_s.area.width, b_s.area.height)
@@ -53,7 +53,7 @@ def system_bullet_enemy_collision(world: esper.World, explosion: dict) -> int:
                     create_explosion_sprite(world, b_t.pos, explosion["boss_enemy"])
                     enemies_killed += 1
                     player_points = world.get_components(CPlayerPoints, CSurface)
-                    game_over = True
+                    game_win = True
                 break
 
-    return enemies_killed, game_over
+    return enemies_killed, game_win

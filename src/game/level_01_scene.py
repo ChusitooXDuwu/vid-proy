@@ -7,7 +7,6 @@ from src.create.prefab_creator import (
     create_enemy_counter,
     create_image,
     create_info_bar,
-    create_life_icon,
     create_life_icons,
     create_pause_text,
     create_ship,
@@ -22,6 +21,7 @@ from src.create.prefab_creator import (
 from src.ecs.components.c_input_command import CInputCommand, CommandPhase
 from src.ecs.components.c_rotation import CRotation, RotationEnum
 from src.ecs.components.c_surface import CSurface
+from src.ecs.components.tags.c_tag_boss_enemy import CTagBossEnemy
 from src.ecs.components.tags.c_tag_bullet import CTagBullet
 from src.ecs.components.tags.c_tag_enemy import CTagEnemy
 from src.ecs.systems.s_animation import system_animation
@@ -72,11 +72,8 @@ class Level01Scene(Scene):
         self.bullet_timer = 0.0  # TODO: Use game config
         self.bullet_cooldown = 0.0001  # TODO: Use game config
         self.can_shoot = True
-        
-        # self.bullet_timer = None
-        # self.bullet_cooldown = None
-        # self.can_shoot = None
-        
+
+
         self.enemy_counters = None
         self.a_d_1910 = None
         self.stage_1 = None
@@ -93,10 +90,12 @@ class Level01Scene(Scene):
         self.total_spawned = 0
         self.player_points = 0
 
-        self._game_over = False
-        self._game_over_timer = 0.0
-        self._game_over_delay = 3.0
+        self._game_win = False
+        self._game_win_timer = 0.0
+        self._game_win_delay = 2.5
         self._waiting_to_switch = False
+        self._game_win_countdown_time = 0.0
+        self._game_win_time_to_appear = 3
         
         self.game_over_countdown_time = 0.0
         self.game_over_time_to_appear = 2.5
@@ -113,17 +112,19 @@ class Level01Scene(Scene):
         self.player_killed = False
         self.player_killed_countdown_time = 0.0
         self.player_killed_time_to_appear = 2.5
+        self.boss_spawned = False
+                
         
-        
-    def _set_entities_visibility(self, visible: bool):
+    def _set_entities_visibility(self, visible: bool, player: bool = True):
         # Player
-        if self.player_entity is not None and self.ecs_world.entity_exists(
-            self.player_entity
-        ):
-            if self.ecs_world.has_component(self.player_entity, CSurface):
-                self.ecs_world.component_for_entity(
-                    self.player_entity, CSurface
-                ).visible = visible
+        if player:
+            if self.player_entity is not None and self.ecs_world.entity_exists(
+                self.player_entity
+            ):
+                if self.ecs_world.has_component(self.player_entity, CSurface):
+                    self.ecs_world.component_for_entity(
+                        self.player_entity, CSurface
+                    ).visible = visible
 
         # Intro elements
         if self.player_1 is not None and self.ecs_world.entity_exists(self.player_1):
@@ -149,7 +150,9 @@ class Level01Scene(Scene):
             # Bullets
             if self.ecs_world.has_component(
                 ent, CTagBullet
-            ) or self.ecs_world.has_component(ent, CTagEnemy):
+            ) or self.ecs_world.has_component(ent, CTagEnemy) or self.ecs_world.has_component(
+                ent, CTagBossEnemy
+            ):
                 c_surf.visible = visible
 
     def do_draw(self, screen, _: bool = False):
@@ -158,16 +161,15 @@ class Level01Scene(Scene):
 
     def do_create(self):
         
-        
+        self.boss_spawned = False
         self.player_killed_countdown_time = 0.0
         self.intro_level_elapsed_time = 0.0
-        self._game_over_timer = 0.0
-        self.game_over_countdown_time = 0.0
+        self._game_win_timer = 0.0
+        self.game_win_countdown_time = 0.0
         
         self.lifes = create_life_icons(self.ecs_world,
             self.player_cfg, ServiceLocator.game_state.remaining_lifes)
 
-        print("Lifes: ", ServiceLocator.game_state.remaining_lifes)
         
         self.player_points = ServiceLocator.game_state.points
         
@@ -240,6 +242,17 @@ class Level01Scene(Scene):
 
         create_text_interface(self.ecs_world, self.level_01_intro_cfg, "credit")
         create_text_interface(self.ecs_world, self.level_01_intro_cfg, "credit_00")
+        
+        self.enemy_progress_bar = create_enemy_progress_bar(
+            self.ecs_world,
+            self.enemy_counter_base_pos,
+            self.enemy_icon_count,
+            self.enemy_icon_spacing,
+            self.enemies_killed,
+            self.enemies_total,
+            8,
+            100,
+        )
         
         
         # Pause Text
@@ -321,7 +334,7 @@ class Level01Scene(Scene):
                     )
                     direction = c_rotation.directions[c_rotation.index]
 
-                    if not self._game_over:
+                    if not self._game_over and not self._game_win:
                         create_bullet(
                             self.ecs_world,
                             direction,
@@ -333,176 +346,168 @@ class Level01Scene(Scene):
                     self.bullet_timer = 0.0
 
     def do_update(self, delta_time: float):
-        if not self._game_paused:
-            self.intro_level_elapsed_time += delta_time
-            system_remove_explosion_animation(self.ecs_world)
-            system_animation(self.ecs_world, delta_time)
-            system_rotation_update(self.ecs_world, delta_time)
-            system_player_state(self.ecs_world)
-            system_bullet_movement(self.ecs_world, delta_time)
-            system_screen_boundary_bullet(self.ecs_world, self.screen_rect)
-            system_movement(
-                        self.ecs_world,
-                        delta_time,
-                        self.player_entity,
-                        self.enemies_cfg["boss_enemy"],
-                    )
-            
-        system_color_cycle(
+        system_color_cycle(self.ecs_world, delta_time, self.level_01_intro_cfg)
+        
+        if self._game_paused:
+            return
+
+        self.intro_level_elapsed_time += delta_time
+        system_remove_explosion_animation(self.ecs_world)
+        system_animation(self.ecs_world, delta_time)
+        system_rotation_update(self.ecs_world, delta_time)
+        system_player_state(self.ecs_world)
+        system_bullet_movement(self.ecs_world, delta_time)
+        system_screen_boundary_bullet(self.ecs_world, self.screen_rect)
+        system_movement(
             self.ecs_world,
             delta_time,
-            self.level_01_intro_cfg,
+            self.player_entity,
+            self.enemies_cfg["boss_enemy"],
         )
         
-        if self.intro_level_elapsed_time >= self.intro_level_countdown_time:
-            if self.ecs_world.entity_exists(self.a_d_1910):
-                self.ecs_world.delete_entity(self.a_d_1910)
-            if self.ecs_world.entity_exists(self.stage_1):
-                self.ecs_world.delete_entity(self.stage_1)
-            if self.ecs_world.entity_exists(self.player_1):
-                self.ecs_world.delete_entity(self.player_1)
 
+        if self.intro_level_elapsed_time < self.intro_level_countdown_time:
+            return
+
+        self._remove_intro_entities()
+
+        if not self.player_killed:
+            self._game_over, self.lifes, self.player_killed = system_collision_enemy_player(
+                self.ecs_world, self.explosion_cfg, self.lifes, self.player_entity
+            )
+
+        if self.player_killed:
+            self._handle_player_killed(delta_time)
+            return
+
+        system_respawner(self.ecs_world, self.screen_rect)
+
+        enemies_killed, game_win = system_bullet_enemy_collision(
+            self.ecs_world, self.explosion_cfg
+        )
         
+        if game_win:
+            self._game_win = True
+            
         
-            if not self.player_killed:
-                self._game_over, self.lifes, self.player_killed = system_collision_enemy_player(
-                        self.ecs_world, self.explosion_cfg, self.lifes, self.player_entity
-                    )
+        self.enemies_killed += enemies_killed
+        ServiceLocator.game_state.enemy_kills = self.enemies_killed
 
-            if not self._game_paused:
+        self._update_enemy_progress_bar()
+
+        if self._game_win:
+            self._handle_game_win(delta_time)
+            return
+
+        if self._game_over:
+            self._handle_game_over(delta_time)
+            return
+
+        system_enemy_movement_no_rebound(
+            self.ecs_world,
+            self.screen_rect,
+            self.enemies_cfg,
+            self.total_spawned,
+            delta_time,
+        )
+
+        # system_remove_explosion_animation(self.ecs_world)
+        self._handle_boss_spawn()
+        self._handle_bullet_cooldown(delta_time)
+
+
+    def _remove_intro_entities(self):
+        for ent in [self.a_d_1910, self.stage_1, self.player_1]:
+            if self.ecs_world.entity_exists(ent):
+                self.ecs_world.delete_entity(ent)
+
+    def _update_enemy_progress_bar(self):
+        if hasattr(self, "enemy_progress_bar") and self.enemy_progress_bar is not None:
+            if self.ecs_world.entity_exists(self.enemy_progress_bar):
+                self.ecs_world.delete_entity(self.enemy_progress_bar)
+        self.enemy_progress_bar = create_enemy_progress_bar(
+            self.ecs_world,
+            self.enemy_counter_base_pos,
+            self.enemy_icon_count,
+            self.enemy_icon_spacing,
+            self.enemies_killed,
+            self.enemies_total,
+            8,
+            100,
+        )
+
+    def _handle_boss_spawn(self):
+        if not self.boss_spawned:
+            boss = system_boss_enemy_spawner(
+                self.ecs_world,
+                self.screen_rect,
+                self.enemies_cfg["boss_enemy"],
+                self.enemies_killed,
+                self.enemies_cfg["total_minion_enemies"],
+            )
+            if boss:
+                self.boss_spawned = True
+
+    def _handle_bullet_cooldown(self, delta_time):
+        if not self.can_shoot:
+            self.bullet_timer += delta_time
+            if self.bullet_timer >= self.bullet_cooldown:
+                self.can_shoot = True
+
+    def _handle_game_win(self, delta_time):
+        delete_all_enemies(self.ecs_world)
+        if self._waiting_to_switch:
+            self._game_win_timer += delta_time
+            if self._game_win_timer >= self._game_win_delay:
+                delete_all_clouds(self.ecs_world)
+                self._set_entities_visibility(False, player=True)
+                create_text_interface(
+                    self.ecs_world, self.level_01_intro_cfg, "player_1"
+                )
+                create_text_interface(
+                    self.ecs_world, self.level_01_intro_cfg, "game_win"
+                )
+                self._game_win_countdown_time += delta_time
                 
-                system_respawner(self.ecs_world, self.screen_rect)
-                
-                if not self.player_killed:
-                    
-                    
-                    
-
-                    enemies_killed, self._enemy_boss_defeated = system_bullet_enemy_collision(
-                        self.ecs_world, self.explosion_cfg
-                    )
-                    
-                    
-                    self.enemies_killed += enemies_killed
-                    
-                    ServiceLocator.game_state.enemy_kills = self.enemies_killed
-                    
-                    # actualizar el contador de enemigos
-                    if (
-                        hasattr(self, "enemy_progress_bar")
-                        and self.enemy_progress_bar is not None
-                    ):
-                        if self.ecs_world.entity_exists(self.enemy_progress_bar):
-                            self.ecs_world.delete_entity(self.enemy_progress_bar)
-
-                    self.enemy_progress_bar = create_enemy_progress_bar(
-                        self.ecs_world,
-                        self.enemy_counter_base_pos,
-                        self.enemy_icon_count,
-                        self.enemy_icon_spacing,
-                        self.enemies_killed,
-                        self.enemies_total,
-                        8,
-                        100,
-                    )
-
-                    if (
-                        self.intro_level_elapsed_time >= self.intro_level_countdown_time
-                        and not self._game_over
-                    ):
-                        system_enemy_movement_no_rebound(
-                            self.ecs_world,
-                            self.screen_rect,
-                            self.enemies_cfg,
-                            self.total_spawned,
-                            delta_time,
-                        )
-
-                    system_remove_explosion_animation(self.ecs_world)
-
-                    if not self._game_over:
-                        system_boss_enemy_spawner(
-                            self.ecs_world,
-                            self.screen_rect,
-                            self.enemies_cfg["boss_enemy"],
-                            self.enemies_killed,
-                            self.enemies_cfg["total_minion_enemies"],
-                        )
-
-                    if self._enemy_boss_defeated and not self._waiting_to_switch:
-                        self._game_over = True
-                        ServiceLocator.sounds_service.play(
-                            self.level_01_intro_cfg["boss_defeat"]["sound"]
-                        )
+            if self._game_win_time_to_appear < self._game_win_countdown_time:
+                    self._reset_scene_state()
+                    self.switch_scene("MENU_SCENE")
         
-                    # Si ya se está esperando, actualizamos el temporizador
-                    if self._waiting_to_switch:
-                        self._game_over_timer += delta_time
-                        if self._game_over_timer >= self._game_over_delay:
-                            
-                            self._reset_scene_state()
-                            self.switch_scene("MENU_SCENE")
-                    elif self._game_over:
-                                
-                        delete_all_enemies(self.ecs_world, self.explosion_cfg)
+        else:
+            self._waiting_to_switch = True
+            self._game_win_timer = 0.0
+            ServiceLocator.sounds_service.play(
+                self.level_01_intro_cfg["boss_defeat"]["sound"]
+            )
+            self._set_entities_visibility(False, player=False)
+            
+            
+            
 
-                        self.game_over_countdown_time += delta_time
-                        
-                        if self.game_over_time_to_appear < self.game_over_countdown_time:
-                            ServiceLocator.sounds_service.play(
-                                self.level_01_intro_cfg["end"]["sound"]
-                            )
-                            self._waiting_to_switch = True
-                            self._game_over_timer = 0.0
-                            delete_all_clouds(self.ecs_world)
-                            self._set_entities_visibility(False)
-                            create_text_interface(
-                                self.ecs_world, self.level_01_intro_cfg, "player_1"
-                            )
-                            create_text_interface(
-                                self.ecs_world, self.level_01_intro_cfg, "game_over"
-                            )
+    def _handle_game_over(self, delta_time):
+        delete_all_enemies(self.ecs_world, self.explosion_cfg)
+        self.game_over_countdown_time += delta_time
+        if self.game_over_time_to_appear < self.game_over_countdown_time:
+            ServiceLocator.sounds_service.play(
+                self.level_01_intro_cfg["end"]["sound"]
+            )
+            self._game_over_timer = 0.0
+            delete_all_clouds(self.ecs_world)
+            self._set_entities_visibility(False)
+            create_text_interface(
+                self.ecs_world, self.level_01_intro_cfg, "player_1"
+            )
+            create_text_interface(
+                self.ecs_world, self.level_01_intro_cfg, "game_over"
+            )
 
-                    if not self.can_shoot:
-                        self.bullet_timer += delta_time
-                        if self.bullet_timer >= self.bullet_cooldown:
-                            self.can_shoot = True
-                
-                
-                elif self._waiting_to_switch:
-                    self._game_over_timer += delta_time
-                    if self._game_over_timer >= self._game_over_delay:   
-                        self._reset_scene_state()
-                        self.switch_scene("LEVEL_01_MENU_SCENE")
-                
-                elif self._game_over:
-                    delete_all_enemies(self.ecs_world, self.explosion_cfg)
-
-                    self.game_over_countdown_time += delta_time
-                        
-                    if self.game_over_time_to_appear < self.game_over_countdown_time:
-                            ServiceLocator.sounds_service.play(
-                                self.level_01_intro_cfg["end"]["sound"]
-                            )
-                            self._waiting_to_switch = True
-                            self._game_over_timer = 0.0
-                            delete_all_clouds(self.ecs_world)
-                            self._set_entities_visibility(False)
-                            create_text_interface(
-                                self.ecs_world, self.level_01_intro_cfg, "player_1"
-                            )
-                            create_text_interface(
-                                self.ecs_world, self.level_01_intro_cfg, "game_over"
-                            )
-                
-                else:
-                    self.player_killed_countdown_time += delta_time
-                    if self.player_killed_time_to_appear <= self.player_killed_countdown_time:
-                        delete_all_enemies(self.ecs_world)
-                        self._player_killed()
-                        ServiceLocator.game_state.remaining_lifes = len(self.lifes)
-                        
-                        self.switch_scene("LEVEL_01_SCENE")
+    def _handle_player_killed(self, delta_time):
+        self.player_killed_countdown_time += delta_time
+        if self.player_killed_time_to_appear <= self.player_killed_countdown_time:
+            delete_all_enemies(self.ecs_world)
+            self._player_killed()
+            ServiceLocator.game_state.remaining_lifes = len(self.lifes)
+            self.switch_scene("LEVEL_01_SCENE")
                         
 
     def _player_killed(self):
@@ -510,7 +515,7 @@ class Level01Scene(Scene):
         self.player_entity = None
         self._game_over = False
         self._waiting_to_switch = False
-        self._game_over_timer = 0.0
+        self._game_win_timer = 0.0
         self.intro_level_elapsed_time = 0.0
         self.player_killed_countdown_time = 0.0
         self.player_killed = False
@@ -520,7 +525,7 @@ class Level01Scene(Scene):
         self.player_entity = None
         self._game_over = False
         self._waiting_to_switch = False
-        self._game_over_timer = 0.0
+        self._game_win_timer = 0.0
         self.enemies_killed = 0
         self.total_spawned = 0
         self.player_points = 0
